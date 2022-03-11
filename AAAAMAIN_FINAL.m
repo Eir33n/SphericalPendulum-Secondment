@@ -73,7 +73,7 @@ if C1==1
 %     axis equal
     figure('Units','normalized','Position',[0 0 1 1])
     t = 0;
-    for i = 1:5:N
+    for i = 1:100:N
         t = dt*i;
 %         sphere(100)
 %         axis equal
@@ -131,20 +131,14 @@ plot(qC(3,:), wC(3,:))
 hold on 
 plot(qC(3,1), wC(3,1), 'ro', 'MarkerSize', 5)
 figure(5)
-plot(time, potential_energy, time, kinetic_energy, time, (potential_energy+kinetic_energy), 'LineWidth', 3)
-legend('potential', 'kinetic', 'total')
-<<<<<<< HEAD
-figure(4)
-<<<<<<< Updated upstream
-=======
-hold on
+plot(time, (potential_energy+kinetic_energy), time, kinetic_energy, time, potential_energy, 'LineWidth', 3)
+legend('total', 'kinetic', 'potential')
+
 
 figure(6)
->>>>>>> Ergys
+
 plot(time, (potential_energy+kinetic_energy), 'LineWidth', 3)
-=======
-plot(time, (potential_energy+kinetic_energy),'LineWidth', 3)
->>>>>>> Stashed changes
+
 
     %% PRESERVATION OF THE GEOMETRY
 
