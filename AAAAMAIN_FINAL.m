@@ -54,6 +54,19 @@ end
 qC(:,1) = q0;
 pC(:,1) = Mat*q0;
 
+<<<<<<< Updated upstream
+=======
+
+% %% CONVERGENCE RATE OF THE METHODS
+% 
+% prompt = 'Do you want to see the convergence rate of the implemented methods? Write 1 for yes, 0 for no\n\n';
+% C = input(prompt);
+% if C==1
+%     checkConvergenceRate(f,action,vecField,z0,L,m); 
+% end
+% 
+
+>>>>>>> Stashed changes
 %% TIME EVOLUTION OF THE SOLUTION
 
 prompt = 'Do you want to see the Time Evolution of the solution? Write 1 for yes, 0 for no\n\n';
@@ -127,7 +140,11 @@ figure(3)
 plot(time, potential_energy, time, kinetic_energy, time, (potential_energy+kinetic_energy), 'LineWidth', 3)
 legend('potential', 'kinetic', 'total')
 figure(4)
+<<<<<<< Updated upstream
 plot(time, (potential_energy+kinetic_energy), 'LineWidth', 3)
+=======
+plot(time, (potential_energy+kinetic_energy),'LineWidth', 3)
+>>>>>>> Stashed changes
 
     %% PRESERVATION OF THE GEOMETRY
 
