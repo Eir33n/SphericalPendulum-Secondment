@@ -1,23 +1,16 @@
-clc;
-clear all;
-close all;
+clc
+clear
+close all
 
-prompt = 'How many 3D pendulums do you want to connect?\n\n';
-P = input(prompt);
+L = 1; 
+m = 1;
 
-L = rand(P,1); 
-m = rand(P,1);
+damp=input('Insert a damping value = \n');
 
-L = 0*L + 1; 
-m = 0*m + 1;
-
-damp=input('damping = \n');
-
-[q0,w0,z0] = initializeSE3N(P);
+[q0,w0,z0] = initializeZeroVel();
+% [q0,w0,z0] = initializeSE3N(P);
 % [q0,w0,z0] = initializeSE3N_smallVariation(P);
 % [q0,w0,z0] = initializeSE3N_largeVariation(P);
-w0 = [0; 0; 0];
-z0(4:end) = w0;
 
 Energy = @(q,w) 0.5*w'*assembleR(q,L,m)*w + potential(q,L,m);
 
