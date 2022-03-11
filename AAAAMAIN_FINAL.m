@@ -16,8 +16,8 @@ damp=input('damping = \n');
 [q0,w0,z0] = initializeSE3N(P);
 % [q0,w0,z0] = initializeSE3N_smallVariation(P);
 % [q0,w0,z0] = initializeSE3N_largeVariation(P);
-w0 = [0; 0; 0];
-z0(4:end) = w0;
+% w0 = [0; 0; 0];
+% z0(4:end) = w0;
 
 Energy = @(q,w) 0.5*w'*assembleR(q,L,m)*w + potential(q,L,m);
 
@@ -25,7 +25,7 @@ disp("Energy of this initial condition: "+num2str(Energy(q0,w0)));
 
 t0 = 0;
 T = 5; 
-N = 1000; 
+N = 10000; 
 time = linspace(t0,T,N); 
 dt = time(2)-time(1);
 
@@ -63,8 +63,8 @@ zC = zeros(6*P,N);
 if C1==1
     zC(:,1) = z0;
     for i = 1:N-1
-        zC(:,i+1) = FreeRK4SE3N(f,action,dt,zC(:,i));
-
+%         zC(:,i+1) = FreeRK4SE3N(f,action,dt,zC(:,i));
+        zC(:,i+1) = LieEulerSE3N(vecField,action, zC(:,i), dt);
         qC(:,i+1) = extractq(zC(:,i+1));
         pC(:,i+1) = Mat*qC(:,i+1);
     end
@@ -109,7 +109,8 @@ potential_energy(1) = potential(qC(:,1),L,m);
 
 zC(:,1) = z0;
 for i = 1:N-1
-    zC(:,i+1) = FreeRK4SE3N(f,action,dt,zC(:,i));
+    zC(:,i+1) = LieEulerSE3N(vecField,action, zC(:,i), dt);
+%     zC(:,i+1) = FreeRK4SE3N(f,action,dt, zC(:,i));
 
     qC(:,i+1) = extractq(zC(:,i+1));
     wC(:,i+1) = extractw(zC(:,i+1));
@@ -117,16 +118,24 @@ for i = 1:N-1
     potential_energy(i+1) = potential(qC(:,i+1),L,m);
 end
 
-figure(1)
+figure(2)
 plot(qC(1,:), wC(1,:))
 hold on
 plot(qC(1,1), wC(1,1), 'ro', 'MarkerSize', 5)
-plot(qC(2,:), wC(2,:))
-plot(qC(2,1), wC(2,1), 'ro', 'MarkerSize', 5)
 figure(3)
+plot(qC(2,:), wC(2,:))
+hold on 
+plot(qC(2,1), wC(2,1), 'ro', 'MarkerSize', 5)
+figure(4)
+plot(qC(3,:), wC(3,:))
+hold on 
+plot(qC(3,1), wC(3,1), 'ro', 'MarkerSize', 5)
+figure(5)
 plot(time, potential_energy, time, kinetic_energy, time, (potential_energy+kinetic_energy), 'LineWidth', 3)
 legend('potential', 'kinetic', 'total')
-figure(4)
+hold on
+
+figure(6)
 plot(time, (potential_energy+kinetic_energy), 'LineWidth', 3)
 
     %% PRESERVATION OF THE GEOMETRY
