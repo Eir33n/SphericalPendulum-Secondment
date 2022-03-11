@@ -22,7 +22,6 @@ function A = expSE3(input)
         Clow = (1/6-theta^2/120+theta^4/5040-theta^6/362880);
         Vlow = eye(3) + Blow*hat(u) + Clow * hat(u) * hat(u);
         A = [expRodrigues(u), Vlow*v];
-    
     end
     
 end

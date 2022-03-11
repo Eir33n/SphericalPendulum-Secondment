@@ -12,5 +12,5 @@ function F = fManiToAlgebra(q, w, L, m, damp)
     F = zeros(6, 1);
     F(1:3) = w; 
     F(4:6) = hat(q) * V;
-
+    
 end
