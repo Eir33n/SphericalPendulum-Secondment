@@ -81,17 +81,17 @@ if C1
     end
 end
 
-% figure(1)
-% plot(qC(1,:), wC(1,:))
-% hold on
-% plot(qC(1,1), wC(1,1), 'ro', 'MarkerSize', 5)
-% plot(qC(2,:), wC(2,:))
-% plot(qC(2,1), wC(2,1), 'ro', 'MarkerSize', 5)
-% figure(3)
-% plot(time, potential_energy, time, kinetic_energy, time, (potential_energy+kinetic_energy), LineWidth=3)
-% legend('potential', 'kinetic', 'total')
-% figure(4)
-% plot(time, (potential_energy+kinetic_energy), LineWidth=3)
+figure(1)
+plot(qC(1,:), wC(1,:))
+hold on
+plot(qC(1,1), wC(1,1), 'ro', 'MarkerSize', 5)
+plot(qC(2,:), wC(2,:))
+plot(qC(2,1), wC(2,1), 'ro', 'MarkerSize', 5)
+figure(3)
+plot(time, potential_energy, time, kinetic_energy, time, (potential_energy+kinetic_energy), LineWidth=3)
+legend('potential', 'kinetic', 'total')
+figure(4)
+plot(time, (potential_energy+kinetic_energy), LineWidth=3)
 
 
 

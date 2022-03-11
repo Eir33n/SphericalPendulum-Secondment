@@ -8,6 +8,9 @@ function F = fManiToAlgebra(q, w, L, m, damp)
 
     z = [q; w];
     V = FuncW(z, L, m, damp);
-    F = hat(q) * V;
+
+    F = zeros(6, 1);
+    F(1:3) = w; 
+    F(4:6) = hat(q) * V;
 
 end
