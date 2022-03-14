@@ -1,5 +1,4 @@
 function vec = dexpinvSE3 (sigma, input)
-
     
     A = sigma(1:3);
     a = sigma(4:6);

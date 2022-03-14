@@ -1,4 +1,4 @@
-function vec = FuncW(z,L,m, damp)
+function vec = FuncW(z, L, m, damp)
 
     %This function is used to integrate with ODE45, so the input z is of
     %the form z = [q1,q2,...,qP,w1,w2,...,wP]
@@ -6,11 +6,11 @@ function vec = FuncW(z,L,m, damp)
     %R(q)^{-1}*right hand side of the ODE, defined by assembleF.
     %damp is the damping coeff.
 
-    q = z(1:length(z)/2);
-    w = z(length(z)/2+1:end);
+    q = z(1:3);
+    w = z(4:6);
     
-    R = assembleR(q,L,m);
-    F = assembleF(q,w,m,L)-damp*w;
+    R = assembleR_diag(L, m);
+    F = assembleF(q, w, m, L) - damp*w;
     
     vec = R\F;
 end
