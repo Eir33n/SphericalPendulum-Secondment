@@ -73,6 +73,13 @@ if C1
     t = 0;
     for i = 1:25:N_TIME
         t = dt*i;
+        % Create sphere surface
+        [x, y, z] = sphere(128);
+        h = surfl(x, y, z); 
+        set(h, 'FaceAlpha', 0.1)
+        s.EdgeColor = 'none';
+        shading flat
+        % Plot pendulum at time step i
         plot3([0,qC(1,i)],[0,qC(2,i)],[0,qC(3,i)],'r*',...
             [qC(3*(1:P-1)-2,i),qC(3*(1:P-1)+1,i)],[qC(3*(1:P-1)-1,i),qC(3*(1:P-1)+2,i)],...
                 [qC(3*(1:P-1),i),qC(3*(1:P-1)+3,i)],'k-o','Markersize',4);
@@ -88,15 +95,30 @@ if C1
 end
 
 figure(2)
-plot(qC(1,:), wC(1,:))
+plot(qC(1,:), wC(1,:), 'LineWidth', 2)
 hold on
-plot(qC(1,1), wC(1,1), 'ro', 'MarkerSize', 5)
-plot(qC(2,:), wC(2,:))
-plot(qC(2,1), wC(2,1), 'ro', 'MarkerSize', 5)
+plot(qC(2,:), wC(2,:), 'LineWidth', 2)
+plot(qC(1,1), wC(1,1), 'ro', 'MarkerSize', 5, 'MarkerFaceColor', 'r')
+plot(qC(2,1), wC(2,1), 'ro', 'MarkerSize', 5, 'MarkerFaceColor', 'r')
+legend('x-coordinate', 'y-coordinate')
+xlabel('\textbf{q}', Interpreter='latex', FontSize=16)
+ylabel('$\dot{\textbf{q}}$', Interpreter='latex', FontSize=16)
+grid()
 
 figure(3)
-plot(time, potential_energy, time, kinetic_energy, time, (potential_energy+kinetic_energy), LineWidth=3)
-legend('potential', 'kinetic', 'total')
-
-figure(4)
+ax(1) = subplot(2, 1, 1);
+plot( time, (potential_energy+kinetic_energy), time, potential_energy, time, kinetic_energy, LineWidth=3)
+ylabel('Energy', FontSize=16)
+legend('Total Energy', 'Potential Energy', 'Kinetic Enrgy')
+grid()
+ax(2) = subplot(2, 1, 2);
 plot(time, (potential_energy+kinetic_energy), LineWidth=3)
+ylabel('Total Energy', FontSize=16)
+grid()
+
+linkaxes(ax,'x');
+xlabel('Time', FontSize=16)
+
+
+
+
