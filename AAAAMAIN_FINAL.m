@@ -22,7 +22,7 @@ disp("Energy of this initial condition: " + ...
 
 t0 = 0;
 T = 5; 
-N_TIME = 100000; 
+N_TIME = 10000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1);
 
@@ -52,9 +52,9 @@ Len = zeros(3, 1);
 zC = zeros(6, N_TIME);
 zC(:, 1) = [q0; w0];
 for i = 1:N_TIME-1
-%     zC(:, i+1) = LieEulerSE3(f, action, zC(:, i), dt);
-    zC(:, i+1) = ImplicitLieEulerSE3(f, action, jacobian, ...
-                                     zC(:, i), dt, max_it, tol);
+    zC(:, i+1) = LieEulerSE3(f, action, zC(:, i), dt);
+%     zC(:, i+1) = ImplicitLieEulerSE3(f, action, jacobian, ...
+%                                      zC(:, i), dt, max_it, tol);
 
     qC(:, i+1) = getq(zC(:, i+1));
     wC(:, i+1) = getw(zC(:, i+1));
@@ -100,16 +100,3 @@ legend('potential', 'kinetic', 'total')
 
 figure(4)
 plot(time, (potential_energy+kinetic_energy), LineWidth=3)
-
-%% PRESERVATION OF THE GEOMETRY
-% subplot(4, 2, 3)
-% plot(times, 1-nn(:,:,3).^2,'-','linewidth',2);
-% xlim([0 5])
-% % yticks(1)
-% legend('$q_1$','$q_2$','interpreter','latex','FontSize',14,'Location', 'southwest');
-% xlabel("Time",'fontsize',14);
-% ylabel("Norm",'fontsize',14);
-% ax = gca;
-% ax.XAxis.FontSize = 15;
-% ax.YAxis.FontSize = 15;
-% title('Lie Euler','fontsize',14);
