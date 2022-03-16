@@ -8,14 +8,11 @@ L = 1;
 m = 1;
 
 damp = input('Insert a damping value = \n');
-% damp = 0.01;
 
-% [q0, w0, z0] = initializeZeroVel();
-[q0, w0, z0] = initializeSE3N(1);
-% [q0, w0, z0] = initializeSE3N_smallVariation(1);
-% [q0, w0, z0] = initializeSE3N_largeVariation(1);
-
-% q0 = [0; 1; 0]; w0 = [0; 0.3; 0]; z0 = [q0; w0];
+[q0, w0, z0] = initializeZeroVel();
+% [q0, w0, z0] = initializeSE3N(P);
+% [q0, w0, z0] = initializeSE3N_smallVariation(P);
+% [q0, w0, z0] = initializeSE3N_largeVariation(P);
 
 Energy_kinetic = @(q, w) 0.5 * w' * assembleR_diag(L, m) * w;
 Energy_potential = @(q, w) potential(q, L, m);
@@ -24,10 +21,10 @@ disp("Energy of this initial condition: " + ...
     num2str(Energy_kinetic(q0, w0) + Energy_potential(q0, w0)));
 
 t0 = 0;
-T = 10; 
-N_TIME = 100000; 
+T = 5; 
+N_TIME = 10000; 
 time = linspace(t0, T, N_TIME); 
-dt = time(2) - time(1); disp(num2str(dt) + " time step size")
+dt = time(2) - time(1);
 
 max_it = 10;
 tol = 1e-10;
@@ -37,6 +34,7 @@ getw = @(v) v(4:6);
 
 f = @(v) fManiToAlgebra(getq(v), getw(v), L, m, damp); 
 action = @(B, input) actionSE3(B, input);
+jacobian = @(v, h) jacobianSE3(v, h, m, L, damp);
 
 qC = zeros(3, N_TIME);
 wC = zeros(3, N_TIME);
@@ -54,9 +52,9 @@ Len = zeros(3, 1);
 zC = zeros(6, N_TIME);
 zC(:, 1) = [q0; w0];
 for i = 1:N_TIME-1
-%     zC(:, i+1) = LieEulerSE3(f, action, zC(:, i), dt);
-    zC(:, i+1) = ImplicitLieEulerSE3(f, action, ...
-                                     zC(:, i), dt, max_it, tol);
+    zC(:, i+1) = LieEulerSE3(f, action, zC(:, i), dt);
+%     zC(:, i+1) = ImplicitLieEulerSE3(f, action, jacobian, ...
+%                                      zC(:, i), dt, max_it, tol);
 
     qC(:, i+1) = getq(zC(:, i+1));
     wC(:, i+1) = getw(zC(:, i+1));
@@ -73,7 +71,7 @@ if C1
     P = 1;
     figure('Units','normalized','Position',[0 0 1 1])
     t = 0;
-    for i = 1:floor(N_TIME/50):N_TIME
+    for i = 1:25:N_TIME
         t = dt*i;
         % Create sphere surface
         [x, y, z] = sphere(128);
