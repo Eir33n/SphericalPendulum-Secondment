@@ -1,4 +1,4 @@
-function sol = ImplicitLieEulerSE3(vecField, action, jacobian, p, h, max_it, tol)
+function sol = ImplicitLieEulerSE3(vecField, action, p, h, max_it, tol)
     
     pNew = p;
     
@@ -8,11 +8,12 @@ function sol = ImplicitLieEulerSE3(vecField, action, jacobian, p, h, max_it, tol
     
         res = -pNew + sol;
         if norm(res) < tol
-            disp(i)
+%             disp(i)
             break
         end
-        S_t = jacobian(sol, h);
-        dx = S_t\res;
+
+        S_t = jacobianSE3(pNew, p, h, vecField, action);
+        dx = -S_t\res;
     
         pNew = pNew + dx;
     end
