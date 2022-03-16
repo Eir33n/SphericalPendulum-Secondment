@@ -15,7 +15,10 @@ function F = fManiToAlgebra(q, w, L, m, damp)
     F = zeros(6, 1);
 %     F(1:3) = w; 
 %     F(4:6) = hat(q) * V;
-    F(1:3) = cross(w, q); 
-    F(4:6) = cross(V, q) - damp*w;
+%     F(1:3) = cross(w, q); 
+%     F(4:6) = cross(V, q) - damp*w;
+
+    F(1:3) = w;
+    F(4:6) = V-damp*w;
 
 end
