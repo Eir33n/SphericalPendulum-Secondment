@@ -1,4 +1,3 @@
-clc
 clearvars -except z0
 close all
 %% NUMERICAL PARAMETERS
@@ -56,6 +55,10 @@ else
     [q0, w0, z0] = initializeSE3();
 end
 % q0 = [0; 1; 0]; w0 = [0; 0.3; 0]; z0 = [q0; w0];
+
+disp(['The initial configuration of this run is: ', newline, ...
+    '[', num2str(q0(1)), ' ', num2str(q0(2)), ' ', num2str(q0(3)), ']', ' position', newline, ...
+    '[', num2str(w0(1)), ' ', num2str(w0(2)), ' ', num2str(w0(3)), ']', ' angular velocity'])
 
 qSol = zeros(3, N_TIME);
 wSol = zeros(3, N_TIME);
