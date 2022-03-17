@@ -1,18 +1,46 @@
-function sol = jacobianSE3(v, h, m, L, damp)
+function sol = jacobianSE3(v0, v, h, f, action, method)
 
-g = 9.81;
+% Jacobian of the residual value
+% evaluation with Finite Differences
 
-dA = zeros(6);
-dA(1:3, 1:3) = hat(v(4:6));
-dA(1:3, 4:6) = -hat(v(1:3));
-dA(4:6, 1:3) = [-2*v(1)*v(2),   -3*v(2)^2, -2*v(2)*v(3); ...
-                    3*v(1)^2, 2*v(1)*v(2),  2*v(1)*v(3); ...
-                           0,           0,            0] * (g/L);
-if damp ~= 0
-    dA(4:6, 4:6) = -damp / (m*L^2) * eye(3);
+sol = zeros(6);
+sol0 = action(expSE3(h*f(v0)), v0);
+
+switch method
+    
+    % Implicit Lie Euler
+    case 1
+        for i = 1:6
+            dx = v(i)-v0(i);
+            if dx ~= 0
+                newV = v0;
+                newV(i) = v(i);
+                k1 = f(newV);
+                partialSol = action(expSE3(h*k1), v0);
+                sol(:,i) = (partialSol-sol0)/dx;
+            end
+        end
+        
+        sol = sol-eye(6);
+
+    % Implicit Midpoint Rule
+    case 2
+        for i = 1:6
+            dx = v(i)-v0(i);
+            if dx ~= 0
+                newV = v0;
+                newV(i) = v(i);
+                k1 = f((newV+v0)/2);
+                partialSol = action(expSE3(h*k1), v0);
+                sol(:,i) = (partialSol-sol0)/(2*dx);
+            end
+        end
+        
+        sol = sol-eye(6);
+
+    otherwise
+        error('Method not implemented!')
+
 end
-
-
-sol = -eye(6) + h * dA * v;
 
 end
