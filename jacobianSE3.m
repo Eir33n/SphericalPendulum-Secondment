@@ -1,9 +1,14 @@
 function sol = jacobianSE3(v0, v, h, f, action, method)
 
+% Jacobian of the residual value
+% evaluation with Finite Differences
+
 sol = zeros(6);
 sol0 = action(expSE3(h*f(v0)), v0);
 
 switch method
+    
+    % Implicit Lie Euler
     case 1
         for i = 1:6
             dx = v(i)-v0(i);
@@ -17,6 +22,8 @@ switch method
         end
         
         sol = sol-eye(6);
+
+    % Implicit Midpoint Rule
     case 2
         for i = 1:6
             dx = v(i)-v0(i);
@@ -30,8 +37,10 @@ switch method
         end
         
         sol = sol-eye(6);
+
     otherwise
         error('Method not implemented!')
+
 end
 
 end
