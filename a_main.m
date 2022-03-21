@@ -11,7 +11,7 @@ method = input(['Choose a method:\nWrite a number for...\n[0]...explicit Lie Eul
 % number of time steps
 % time vector
 % time step size
-% maimal iteration steps for implicit methods
+% maximal iteration steps for implicit methods
 % tolerance
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
