@@ -1,25 +1,15 @@
-function F = fManiToAlgebra(q,w,L,m, damp)
+function F = fManiToAlgebra(q, w, L, m, damp)
 
-%     R = assembleR(q,L,m); %Creates the matrix R multiplying w'
-%     
-%     Func = assembleF(q,w,m,L); %Creates the right hand site Rw' = Func
-    
-    vec = @(v,i) getVec(v,i);
-    
-    N = length(m); %Number clcof connected pendulums
-    
-%     V = R\Func; %Finds the right hand side of the equation w' = V
-    z = [q;w];
-    V = FuncW(z,L,m,damp);
-    A = @(i) hat(vec(q,i))*vec(V,i);
-    F = zeros(6*N,1);
-   
-    for i = 1:2*N
-        if mod(i,2)==0
-            F(3*i-2:3*i) =  A(i/2);
-        else
-            F(3*i-2:3*i) = vec(w,(i+1)/2) ;
-        end
-    end
-    
+% Assembling RHS of the mathematical pendulum
+% subject to Earth gravitation [g = 9.81 m/s^2]
+% Introducing some damping in the equations
+
+% TODO : better understand of the damping to make it more physical accurate
+
+V = assembleF(q, w, m, L);
+
+F = zeros(6, 1);
+F(1:3) = w;
+F(4:6) = V - damp*w;
+
 end
