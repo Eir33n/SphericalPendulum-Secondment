@@ -21,7 +21,7 @@ disp('||Y0-Zarr[1 : 4, 0]||=', norm((Y0 - Zarr(1 : 4, 0)), 2));
 disp('||Y1-Zarr[1 : 4, - 1]||=', norm((Y1  - Zarr(1 : 4, -1)), 2));
 
 disp(Zarr.shape);
-% disp(Zarr[0 , :]);
+% disp(Zarr(0 , :]);
 
 
 % Set up axes and draw the sphere
@@ -42,12 +42,12 @@ def setupAx(num, index, title, srad=1):
 
     ax;
 
-fig = plt.figure(figsize = (10, 10));
+fig = plt.figure(figsize = [10, 10]);
 ax = setupAx(1, 1, "Geodesics");
 
-X = cos(Zarr[1,:]) * cos(Zarr[2,:]);
-Y = cos(Zarr[1,:]) * sin(Zarr[2,:]);
-Z = sin(Zarr[1,:]);
+X = cos(Zarr(1,:)) * cos(Zarr(2,:));
+Y = cos(Zarr(1,:)) * sin(Zarr(2,:));
+Z = sin(Zarr(1,:));
 ax.plot3D(X, Y, Z, color="black", linestyle='-');
 
 n, m = Zarr.shape;
@@ -56,13 +56,14 @@ disp(n,m);
 disp(L);
 disp(norm(Y0-Y1));
 P=np.round(linspace(0,m-1,11)).astype(int);
-sfac = max(norm(Y0[2:]), lnorm(Y0[2:]));
+sfac = max([norm(Y0(2:end)), lnorm(Y0(2:end))]);
 c="red";
-for k in P:
-    qq,vv=TS2.sph2vecs(Zarr[:,k]);
+for k = P(1):P(end)
+    qq,vv=TS2.sph2vecs(Zarr(:,k));
     vvs = vv/sfac*0.5;
-    ax.plot3D([qq[0],qq[0]+vvs[0]],[qq[1],qq[1]+vvs[1]], [qq[2],qq[2]+vvs[2]], color=c);
+    ax.plot3D([qq(0),qq(0)+vvs(0)],[qq(1),qq(1)+vvs(1)], [qq(2),qq(2)+vvs(2)], color=c);
     c="blue";
-    
+end
+
 plt.xlabel('x');
 plt.show();

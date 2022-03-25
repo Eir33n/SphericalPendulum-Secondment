@@ -1,12 +1,11 @@
-function Z1 = geo_func(x, Z)
+function dydx = geo_func(x, y)
 % This is a wrapper that adapts geodesiceq to the requirements of the scipy solver solve_bvp
 
-(n, m) = shape(Z);
-Z1 = zeros(8,'like', Z);
-    for k = 1 : m
-            Z1(1:k) = geodesiceq( Z(1 : k));
-    end
+[n, m] = shape(y);
+dydx = zeros(8,m);
 
-
+for k = 1 : m
+    dydx(1:k) = geodesiceq(y(1 : k));
 end
 
+end

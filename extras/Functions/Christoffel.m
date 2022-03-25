@@ -1,11 +1,10 @@
-function Gamma = Christoffel(Y)
+function Gamma = Christoffel(q)
 % The Levi Civita connection on TS2  expressed in spherical coordinates
 
-Y = zeros(1, 4);
-Y(1) = phi;
-Y(2) = theta;
-Y(3) = vphi;
-Y(4) = vtheta;
+phi     = q(1);
+theta   = q(2);
+vphi    = q(3);
+vtheta  = q(4);
 s = sin(phi);
 c = cos(phi);
 t = tan(phi);

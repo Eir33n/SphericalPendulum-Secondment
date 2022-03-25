@@ -1,10 +1,23 @@
 clearvars -except z0
-close all
 %% NUMERICAL PARAMETERS
 
 % CHOOSE A METHOD
-method = input(['Choose a method:\nWrite a number for...\n[0]...explicit Lie Euler Method\n' ...
-    '[1]...implicit Lie Euler Method\n[2]...implicit Lie Midpoint Rule\n']);
+method =  listdlg('PromptString',{'Choose a method'}, ...
+    'ListString',{'explicit Lie Euler method', 'implicit Lie Euler Method', ...
+    'implicit Lie Midpoint Rule', 'Close the current run'}, 'SelectionMode', 'single');
+
+switch method
+    case 1
+        my_method = "explicit Lie Euler method";
+    case 2
+        my_method = "implicit Lie Euler method";
+    case 3
+        my_method = "implicit midpoint rule";
+    case 4
+        return
+    otherwise
+        error('Method Not Implemented yet');
+end
 
 % DEFINITION OF NUMERICAL PARAMETERS AND TIME INTEGRATION
 % initial and final time
@@ -16,7 +29,7 @@ method = input(['Choose a method:\nWrite a number for...\n[0]...explicit Lie Eul
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
 T = 2; 
-N_TIME = 100000; 
+N_TIME = 1000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
@@ -28,7 +41,12 @@ tol = 1e-10;
 % LENGTH, MASS AND DAMPING OF THE PENDULUM
 L = 1; 
 m = 1;
-damp = input('Insert a (non-positive) damping value = \n');
+prompt = {'Insert a (non-positive) damping value'};
+dlgtitle = 'Damping value';
+definput = {'0'};
+dims = [1 40];
+damp = inputdlg(prompt,dlgtitle,dims,definput);
+damp = str2double(damp{1});
 
 %% DEFINITION OF USEFUL FUNCTIONS
 
@@ -43,18 +61,19 @@ getw = @(v) v(4:6);
 % RHS OF THE SYSTEM, RESIDUAL AND JACOBIAN FOR IMPLICIT METHODS
 f = @(v) fManiToAlgebra(getq(v), getw(v), L, m, damp); 
 action = @(B, input) actionSE3(B, input);
-myRes = @(v0, v, h) residualSE3(v0, v, h, f, action, method);
-myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, method);
+myRes = @(v0, v, h) residualSE3(v0, v, h, f, action, my_method);
+myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 
 %% INITIALIZATION OF THE PROBLEM
 
 % [q0, w0, z0] = initializeZeroVel();
-if exist('z0','var')
-    [q0, w0, z0] = initializeSmallVariation(z0);
-else
-    [q0, w0, z0] = initializeSE3();
-end
-% q0 = [0; 1; 0]; w0 = [0; 0.3; 0]; z0 = [q0; w0];
+% if exist('z0','var')
+%     [q0, w0, z0] = initializeSmallVariation(z0);
+% else
+%     [q0, w0, z0] = initializeSE3();
+% end
+q0 = [0; 1; 0]; w0 = [0; 0; 0]; z0_1 = [q0; w0];
+q0 = [0; sin(pi/2-0.01); cos(pi/2-0.01)]; w0 = [0; 0; 0]; z0_2 = [q0; w0];
 
 disp(['The initial configuration of this run is: ', newline, ...
     '[', num2str(q0(1)), ' ', num2str(q0(2)), ' ', num2str(q0(3)), ']', ' position', newline, ...
@@ -62,15 +81,19 @@ disp(['The initial configuration of this run is: ', newline, ...
 
 qSol = zeros(3, N_TIME);
 wSol = zeros(3, N_TIME);
-zSol = zeros(6, N_TIME);
+zSol_1 = zeros(6, N_TIME);
+zSol_2 = zeros(6, N_TIME);
 kinetic_energy = zeros(N_TIME, 1);
 potential_energy = zeros(N_TIME, 1);
+my_distance = zeros(1, N_TIME);
 
 qSol(:, 1) = q0;
 wSol(:, 1) = w0;
-zSol(:, 1) = z0;
+zSol_1(:, 1) = z0_1;
+zSol_2(:, 1) = z0_2;
 kinetic_energy(1) = Energy_kinetic(qSol(:, 1), wSol(:, 1));
 potential_energy(1) = Energy_potential(qSol(:, 1), wSol(:, 1));
+my_distance(1) = riemann_dist(zSol_1(:, 1), zSol_2(:, 1));
 
 disp("Energy of this initial condition: " + ...
     num2str(kinetic_energy(1) + potential_energy(1)));
@@ -78,16 +101,21 @@ disp("Energy of this initial condition: " + ...
 %% SOLUTION OF THE SYSTEM
 
 for i = 1:N_TIME-1
-    if method == 0
-        zSol(:, i+1) = LieEulerSE3(f, action, zSol(:, i), dt);
+    if method == 1
+        zSol_1(:, i+1) = LieEulerSE3(f, action, zSol_1(:, i), dt);
     else
-        zSol(:, i+1) = NewtonItSE3(myRes, myJac, zSol(:, i), dt, max_it, tol);
+        zSol_1(:, i+1) = NewtonItSE3(myRes, myJac, zSol_1(:, i), dt, max_it, tol);
+        zSol_2(:, i+1) = NewtonItSE3(myRes, myJac, zSol_2(:, i), dt, max_it, tol);
     end
 
-    qSol(:, i+1) = getq(zSol(:, i+1));
-    wSol(:, i+1) = getw(zSol(:, i+1));
+    qSol(:, i+1) = getq(zSol_1(:, i+1));
+    wSol(:, i+1) = getw(zSol_1(:, i+1));
     kinetic_energy(i+1) = Energy_kinetic(qSol(:, i+1), wSol(:, i+1));
     potential_energy(i+1) = Energy_potential(qSol(:, i+1), wSol(:, i+1));
+end
+
+for i = 1:N_TIME-1
+    my_distance(i+1) = riemann_dist(zSol_1(:, i+1), zSol_2(:, i+1));
 end
 
 %% TIME EVOLUTION OF THE SOLUTION
@@ -98,21 +126,19 @@ plotsPlus = questdlg('Post processing analysis?', ...
 switch plotsPlus
     case 'Yes, all'
         animation(qSol, N_TIME, dt);
-        post_plots(qSol, wSol, kinetic_energy, potential_energy, time);
+        post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
 %     case 'Yes, just animation'
 %         animation(qSol, N_TIME, dt);
     case 'Yes, just plots'
-        post_plots(qSol, wSol, kinetic_energy, potential_energy, time);
+        post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
     case 'No, thank you!'
-        disp('Thank you for using me! Have a nice day!\n')
+        disp('Thank you for using me! Have a nice day!')
 end
 
 %% MORE SIMULATIONS?
 run = questdlg('Do you want to perform a new simulation?', ...
     'New Simulation', 'Yes', 'No, thank you!','Yes');
 if strcmp(run, 'Yes')
-    go_on = input(['Remember to save before restarting the program.' ...
-        'Press ENTER to proceed.\n']);
     a_main
 else
     disp('It was a pleasure serving you!')
@@ -136,12 +162,12 @@ function animation(q, steps, dstep)
             zlabel("z")
             str = "Time evolution of the pendulums, T="+num2str(dstep*i);
             axis equal;
-            title(str)
+            title(str, FontSize=16)
             pause(0.0000000000001);
         end
 end
 
-function post_plots(q, w, K, P, timeVec)
+function post_plots(q, w, K, P, timeVec, method)
     figure('Name','Phase Space')
     plot(q(1,:), w(1,:), 'LineWidth', 2)
     hold on
@@ -153,6 +179,7 @@ function post_plots(q, w, K, P, timeVec)
     legend('x-coordinate', 'y-coordinate', 'z-coordiante')
     xlabel('\textbf{q}', Interpreter='latex', FontSize=16)
     ylabel('$\dot{\textbf{q}}$', Interpreter='latex', FontSize=16)
+    title("Phase space using "+method, FontSize=18)
     grid()
     
     figure('Name','Energy of the System')
@@ -167,4 +194,5 @@ function post_plots(q, w, K, P, timeVec)
     grid()
     linkaxes(ax,'x');
     xlabel('Time', FontSize=16)
+    sgtitle("Energy of the system using "+method, 'FontSize', 18)
 end

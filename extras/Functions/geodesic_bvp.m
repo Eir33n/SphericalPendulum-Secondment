@@ -14,8 +14,8 @@ m = Result.x.size - 1;
 s = Result.x;
 Z = Result.y;
 for k = 1:m
-    Vm = 0.5 * (Z(5 : 8, k) + Z(5 : 8, k + 1))
-    Ym = 0.5 * (Z(1 : 4, k) + Z(1 : 4, k + 1))
+    Vm = 0.5 * (Z(5 : 8, k) + Z(5 : 8, k + 1));
+    Ym = 0.5 * (Z(1 : 4, k) + Z(1 : 4, k + 1));
     L = L + (s(k + 1) - s(k)) * sqrt(transpose(vm) * metric(Ym) * Vm);
 
 end
