@@ -1,5 +1,5 @@
 clearvars -except z0
-close all
+% close all
 %% NUMERICAL PARAMETERS
 
 % CHOOSE A METHOD
@@ -16,7 +16,7 @@ method = input(['Choose a method:\nWrite a number for...\n[0]...explicit Lie Eul
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
 T = 2; 
-N_TIME = 100000; 
+N_TIME = 10000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
@@ -49,12 +49,12 @@ myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, method);
 %% INITIALIZATION OF THE PROBLEM
 
 % [q0, w0, z0] = initializeZeroVel();
-if exist('z0','var')
-    [q0, w0, z0] = initializeSmallVariation(z0);
-else
-    [q0, w0, z0] = initializeSE3();
-end
-% q0 = [0; 1; 0]; w0 = [0; 0.3; 0]; z0 = [q0; w0];
+% if exist('z0','var')
+%     [q0, w0, z0] = initializeSmallVariation(z0);
+% else
+%     [q0, w0, z0] = initializeSE3();
+% end
+q0 = [0; 1; 0]; w0 = [0; 0.3; 0]; z0 = [q0; w0];
 
 disp(['The initial configuration of this run is: ', newline, ...
     '[', num2str(q0(1)), ' ', num2str(q0(2)), ' ', num2str(q0(3)), ']', ' position', newline, ...
@@ -139,6 +139,7 @@ function animation(q, steps, dstep)
             title(str)
             pause(0.0000000000001);
         end
+        hold off
 end
 
 function post_plots(q, w, K, P, timeVec)
@@ -154,7 +155,8 @@ function post_plots(q, w, K, P, timeVec)
     xlabel('\textbf{q}', Interpreter='latex', FontSize=16)
     ylabel('$\dot{\textbf{q}}$', Interpreter='latex', FontSize=16)
     grid()
-    
+    hold off
+
     figure('Name','Energy of the System')
     ax(1) = subplot(2, 1, 1);
     plot(timeVec, (K+P), timeVec, P, timeVec, K, LineWidth=3)
@@ -167,4 +169,6 @@ function post_plots(q, w, K, P, timeVec)
     grid()
     linkaxes(ax,'x');
     xlabel('Time', FontSize=16)
+   
 end
+
