@@ -9,7 +9,7 @@ sol0 = action(expSE3(h*f(v0)), v0);
 switch method
     
     % Implicit Lie Euler
-    case 1
+    case "implicit Lie Euler method"
         for i = 1:6
             dx = v(i)-v0(i);
             if dx ~= 0
@@ -24,7 +24,7 @@ switch method
         sol = sol-eye(6);
 
     % Implicit Midpoint Rule
-    case 2
+    case "implicit midpoint rule"
         for i = 1:6
             dx = v(i)-v0(i);
             if dx ~= 0
