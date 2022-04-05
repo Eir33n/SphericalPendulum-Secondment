@@ -1,4 +1,4 @@
-function [q0, w0, z0] = initializeSE3()
+function [q0, w0, z0, v] = initializeSE3()
 
 % This method randomly picks a point in TS^2.
 

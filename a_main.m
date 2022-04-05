@@ -1,4 +1,4 @@
-clearvars -except z0
+clearvars -except z0 v
 %% NUMERICAL PARAMETERS
 
 % CHOOSE A METHOD
@@ -28,8 +28,8 @@ end
 % tolerance
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
-T = 2; 
-N_TIME = 1000; 
+T = 10; 
+N_TIME = 10000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
@@ -68,9 +68,9 @@ myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 
 % [q0, w0, z0] = initializeZeroVel();
 if exist('z0','var')
-    [q0, w0, z0] = initializeSmallVariation(z0);
+    [q0, w0, z0] = initializeSmallVariation(z0, v);
 else
-    [q0, w0, z0] = initializeSE3();
+    [q0, w0, z0, v] = initializeSE3();
 end
 
 disp(['The initial configuration of this run is: ', newline, ...
@@ -82,7 +82,6 @@ wSol = zeros(3, N_TIME);
 zSol = zeros(6, N_TIME);
 kinetic_energy = zeros(N_TIME, 1);
 potential_energy = zeros(N_TIME, 1);
-my_distance = zeros(1, N_TIME);
 
 qSol(:, 1) = q0;
 wSol(:, 1) = w0;
@@ -94,7 +93,6 @@ disp("Energy of this initial condition: " + ...
     num2str(kinetic_energy(1) + potential_energy(1)));
 
 %% SOLUTION OF THE SYSTEM
-
 for i = 1:N_TIME-1
     if method == 1
         zSol(:, i+1) = LieEulerSE3(f, action, zSol(:, i), dt);
@@ -113,7 +111,9 @@ end
 % format: 'yyyyMMddTHHmmss'
 timestamp = datestr(now,30);
 saveFile = strcat('out/', timestamp, 'sol', '.txt');
-writematrix(zSol, saveFile, 'Delimiter', ';');
+fileID = fopen(saveFile, 'w');
+fprintf(fileID, '%.16f %.16f %.16f %.16f %.16f %.16f\n', zSol);
+fclose(fileID);
 
 %% TIME EVOLUTION OF THE SOLUTION
 plotsPlus = questdlg('Post processing analysis?', ...
@@ -139,7 +139,7 @@ if strcmp(run, 'Yes')
     a_main
 else
     disp('It was a pleasure serving you!')
-    clearvars z0
+    clearvars
 end
 
 %% USEFUL POST PROCESSING FUNCTIONS
