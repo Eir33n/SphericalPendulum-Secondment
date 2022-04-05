@@ -7,7 +7,7 @@ h = surf(xS2, yS2, zS2, 'FaceAlpha', 0.1);
 h.EdgeColor = 'none';
 hold on
 
-[m, ~]=size(sols);
+[m, ~] = size(sols);
 myColor = colormap("hsv");
 ind = fix(256 / m);
 

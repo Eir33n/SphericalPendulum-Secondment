@@ -10,10 +10,10 @@ end
 % myGeos = cell(n1, 1);
 rslt = zeros(n1, 1);
 
-for i = 1:n2
+for i = 1:n1
 %     myGeos{i} = geodesics(sol1(:, i), sol2(:, i));
     myGeos = geodesics(sol1(:, i), sol2(:, i));
-    rslt(i) = sum(myGeos.y(2, :));
+    rslt(i) = myGeos.y(2, end);
 end
 
 end

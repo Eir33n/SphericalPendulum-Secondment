@@ -29,7 +29,7 @@ end
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
 T = 10; 
-N_TIME = 10000; 
+N_TIME = 1000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
