@@ -28,13 +28,14 @@ end
 % tolerance
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
-T = 10; 
-N_TIME = 1000; 
+T = 1; 
+N_TIME = 1000000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
 max_it = 10;
-tol = 1e-10;
+atol = 1e-15;
+rtol = 1e-8;
 
 %% PHYSICAL PARAMETERS
 
@@ -71,7 +72,8 @@ if exist('z0','var')
     [q0, w0, z0] = initializeSmallVariation(z0, v);
 else
 %     [q0, w0, z0, v] = initializeSE3();
-    [q0, w0, z0, v] = initializeZeroVel();
+%     [q0, w0, z0, v] = initializeZeroVel();
+    [q0, w0, z0, v] = initializeSame();
 end
 
 disp(['The initial configuration of this run is: ', newline, ...
@@ -98,7 +100,7 @@ for i = 1:N_TIME-1
     if method == 1
         zSol(:, i+1) = LieEulerSE3(f, action, zSol(:, i), dt);
     else
-        zSol(:, i+1) = NewtonItSE3(myRes, myJac, zSol(:, i), dt, max_it, tol);
+        zSol(:, i+1) = NewtonItSE3(myRes, myJac, zSol(:, i), dt, max_it, atol, rtol);
     end
 
     qSol(:, i+1) = getq(zSol(:, i+1));
