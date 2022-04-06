@@ -1,4 +1,4 @@
-clearvars -except z0
+clearvars -except z0 v
 %% NUMERICAL PARAMETERS
 
 % CHOOSE A METHOD
@@ -28,7 +28,7 @@ end
 % tolerance
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
-T = 2; 
+T = 10; 
 N_TIME = 1000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
@@ -67,13 +67,11 @@ myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 %% INITIALIZATION OF THE PROBLEM
 
 % [q0, w0, z0] = initializeZeroVel();
-% if exist('z0','var')
-%     [q0, w0, z0] = initializeSmallVariation(z0);
-% else
-%     [q0, w0, z0] = initializeSE3();
-% end
-q0 = [0; 1; 0]; w0 = [0; 0; 0]; z0_1 = [q0; w0];
-q0 = [0; sin(pi/2-0.01); cos(pi/2-0.01)]; w0 = [0; 0; 0]; z0_2 = [q0; w0];
+if exist('z0','var')
+    [q0, w0, z0] = initializeSmallVariation(z0, v);
+else
+    [q0, w0, z0, v] = initializeSE3();
+end
 
 disp(['The initial configuration of this run is: ', newline, ...
     '[', num2str(q0(1)), ' ', num2str(q0(2)), ' ', num2str(q0(3)), ']', ' position', newline, ...
@@ -81,42 +79,41 @@ disp(['The initial configuration of this run is: ', newline, ...
 
 qSol = zeros(3, N_TIME);
 wSol = zeros(3, N_TIME);
-zSol_1 = zeros(6, N_TIME);
-zSol_2 = zeros(6, N_TIME);
+zSol = zeros(6, N_TIME);
 kinetic_energy = zeros(N_TIME, 1);
 potential_energy = zeros(N_TIME, 1);
-my_distance = zeros(1, N_TIME);
 
 qSol(:, 1) = q0;
 wSol(:, 1) = w0;
-zSol_1(:, 1) = z0_1;
-zSol_2(:, 1) = z0_2;
+zSol(:, 1) = z0;
 kinetic_energy(1) = Energy_kinetic(qSol(:, 1), wSol(:, 1));
 potential_energy(1) = Energy_potential(qSol(:, 1), wSol(:, 1));
-my_distance(1) = riemann_dist(zSol_1(:, 1), zSol_2(:, 1));
 
 disp("Energy of this initial condition: " + ...
     num2str(kinetic_energy(1) + potential_energy(1)));
 
 %% SOLUTION OF THE SYSTEM
-
 for i = 1:N_TIME-1
     if method == 1
-        zSol_1(:, i+1) = LieEulerSE3(f, action, zSol_1(:, i), dt);
+        zSol(:, i+1) = LieEulerSE3(f, action, zSol(:, i), dt);
     else
-        zSol_1(:, i+1) = NewtonItSE3(myRes, myJac, zSol_1(:, i), dt, max_it, tol);
-        zSol_2(:, i+1) = NewtonItSE3(myRes, myJac, zSol_2(:, i), dt, max_it, tol);
+        zSol(:, i+1) = NewtonItSE3(myRes, myJac, zSol(:, i), dt, max_it, tol);
     end
 
-    qSol(:, i+1) = getq(zSol_1(:, i+1));
-    wSol(:, i+1) = getw(zSol_1(:, i+1));
+    qSol(:, i+1) = getq(zSol(:, i+1));
+    wSol(:, i+1) = getw(zSol(:, i+1));
     kinetic_energy(i+1) = Energy_kinetic(qSol(:, i+1), wSol(:, i+1));
     potential_energy(i+1) = Energy_potential(qSol(:, i+1), wSol(:, i+1));
 end
 
-for i = 1:N_TIME-1
-    my_distance(i+1) = riemann_dist(zSol_1(:, i+1), zSol_2(:, i+1));
-end
+%% SAVE SOLUTION ON TXT FILE
+% save the time stamp as a string.
+% format: 'yyyyMMddTHHmmss'
+timestamp = datestr(now,30);
+saveFile = strcat('out/', timestamp, 'sol', '.txt');
+fileID = fopen(saveFile, 'w');
+fprintf(fileID, '%.16f %.16f %.16f %.16f %.16f %.16f\n', zSol);
+fclose(fileID);
 
 %% TIME EVOLUTION OF THE SOLUTION
 plotsPlus = questdlg('Post processing analysis?', ...
@@ -142,7 +139,7 @@ if strcmp(run, 'Yes')
     a_main
 else
     disp('It was a pleasure serving you!')
-    clearvars z0
+    clearvars
 end
 
 %% USEFUL POST PROCESSING FUNCTIONS

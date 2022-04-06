@@ -1,4 +1,4 @@
-function res = boundarycondition(q1, q2, p1, p2)
+function res = boundarycondition(q1, q2)
 % A function defining the boundary conditions for the geodesics eqns.
 % Required by bvp4c
 
