@@ -70,7 +70,8 @@ myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 if exist('z0','var')
     [q0, w0, z0] = initializeSmallVariation(z0, v);
 else
-    [q0, w0, z0, v] = initializeSE3();
+%     [q0, w0, z0, v] = initializeSE3();
+    [q0, w0, z0, v] = initializeZeroVel();
 end
 
 disp(['The initial configuration of this run is: ', newline, ...

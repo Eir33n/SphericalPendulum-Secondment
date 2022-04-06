@@ -2,7 +2,7 @@ function rslt = sph2vecs(q)
 % Funtion from spherical coordinates to cartesian coordinate on TS2
 
 if size(q, 1) == 4
-    q = [1, q(1), q(2), 0, q(3), q(4)];
+    q = [1; q(1); q(2); 0; q(3); q(4)];
 end
 
 rslt = zeros(6, 1);
