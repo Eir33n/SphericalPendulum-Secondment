@@ -24,7 +24,7 @@ for i = 1:n1
     for j = 1:size(myGeos.yp, 2)
         rslt(i) = rslt(i) + norm(myGeos.yp(1:4, j), 2);
     end
-    rslt(i) = rslt(i) / size(myGeos.yp, 2);
+    rslt(i) = rslt(i) * (myGeos.x(end)-myGeos.x(1)) / size(myGeos.yp, 2);
 end
 
 end

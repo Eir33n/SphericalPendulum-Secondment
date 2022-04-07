@@ -9,12 +9,12 @@ function sol = NewtonItSE3(residual, jacobian, p, h, max_it, atol, rtol)
 % tol is the tolerance to determine when to stop the integration step
 
 pNew = p;
-
+dx = zeros(size(p));
 for i = 1:max_it
     sol = residual(p, pNew, h);
 
     res = -pNew + sol;
-    if norm(res) < rtol*dx + atol
+    if norm(res) < rtol*norm(dx) + atol
 %             disp(i)
         break
     end

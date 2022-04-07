@@ -2,23 +2,23 @@ function rslt = geodesics(sol1, sol2)
 % evaluation of geodesic between q1 and q2
 
 % transformation matrix to rotate the point on an equator
-% Q = toEquator(sol1(1:3), sol2(1:3));
+Q = toEquator(sol1(1:3), sol2(1:3));
 
 % rotating the points on the equator
-% q1 = transpose(Q) * sol1(1:3);
-% w1 = transpose(Q) * sol1(4:6);
-% q2 = transpose(Q) * sol2(1:3);
-% w2 = transpose(Q) * sol2(4:6);
+q1 = transpose(Q) * sol1(1:3);
+w1 = transpose(Q) * sol1(4:6);
+q2 = transpose(Q) * sol2(1:3);
+w2 = transpose(Q) * sol2(4:6);
 
 % transform the cartesian coordiantes in spherical
-% q1 = cart2sph(q1);
-% w1 = vec2sph(q1, w1);
-% q2 = cart2sph(q2);
-% w2 = vec2sph(q2, w2);
-q1 = cart2sph(sol1(1:3));
-w1 = vec2sph(sol1(1:3), sol1(4:6));
-q2 = cart2sph(sol2(1:3));
-w2 = vec2sph(sol2(1:3), sol2(4:6));
+q1 = cart2sph(q1);
+w1 = vec2sph(q1, w1);
+q2 = cart2sph(q2);
+w2 = vec2sph(q2, w2);
+% q1 = cart2sph(sol1(1:3));
+% w1 = vec2sph(sol1(1:3), sol1(4:6));
+% q2 = cart2sph(sol2(1:3));
+% w2 = vec2sph(sol2(1:3), sol2(4:6));
 
 % saving the points without the radius component (should be always one)
 tol = 1e-13;

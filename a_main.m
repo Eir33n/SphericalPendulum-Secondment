@@ -28,14 +28,14 @@ end
 % tolerance
 % (TODO: insert relative and absolute tolerance)
 t0 = 0;
-T = 1; 
-N_TIME = 1000000; 
+T = 10; 
+N_TIME = 10000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
 max_it = 10;
-atol = 1e-15;
-rtol = 1e-8;
+atol = 1e-8;
+rtol = 1e-6;
 
 %% PHYSICAL PARAMETERS
 
@@ -71,9 +71,9 @@ myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 if exist('z0','var')
     [q0, w0, z0] = initializeSmallVariation(z0, v);
 else
-%     [q0, w0, z0, v] = initializeSE3();
+    [q0, w0, z0, v] = initializeSE3();
 %     [q0, w0, z0, v] = initializeZeroVel();
-    [q0, w0, z0, v] = initializeSame();
+%     [q0, w0, z0, v] = initializeSame();
 end
 
 disp(['The initial configuration of this run is: ', newline, ...
