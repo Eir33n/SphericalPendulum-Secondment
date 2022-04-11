@@ -15,7 +15,7 @@ L = inputdlg(prompt,dlgtitle,dims,definput);
 L = str2double(L{1});
 
 % ENERGY EVALUATION
-Energy_kinetic = @(q, w) 0.5 * w' * eye(3) * w;
+Energy_kinetic = @(q, w) 0.5 * M * cross(w, q)' * cross(w, q) - M * damp * q' * cross(w, q);
 Energy_potential = @(q, w) potential(q, L, M);
 
 [m, ~] = size(sols);

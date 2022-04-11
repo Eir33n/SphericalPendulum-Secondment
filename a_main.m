@@ -42,7 +42,7 @@ rtol = 1e-6;
 % LENGTH, MASS AND DAMPING OF THE PENDULUM
 L = 1; 
 m = 1;
-prompt = {'Insert a (non-positive) damping value'};
+prompt = {'Insert a (non-negative) damping value'};
 dlgtitle = 'Damping value';
 definput = {'0'};
 dims = [1 40];
@@ -52,7 +52,8 @@ damp = str2double(damp{1});
 %% DEFINITION OF USEFUL FUNCTIONS
 
 % ENERGY EVALUATION
-Energy_kinetic = @(q, w) 0.5 * w' * eye(3) * w;
+% Energy_kinetic = @(q, w) 0.5 * m * w' * eye(3) * w - damp * w' * w;
+Energy_kinetic = @(q, w) 0.5 * m * cross(w, q)' * cross(w, q) - m * damp * q' * cross(w, q);
 Energy_potential = @(q, w) potential(q, L, m);
 
 % RETRIEVE POSITION AND ANGULAR VELOCITY FROM THE SOLUTION VECTOR
