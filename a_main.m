@@ -25,8 +25,7 @@ end
 % time vector
 % time step size
 % maximal iteration steps for implicit methods
-% tolerance
-% (TODO: insert relative and absolute tolerance)
+% tolerance (relative and absolute) for Netwon iteration
 t0 = 0;
 T = 10; 
 N_TIME = 10000; 
@@ -52,7 +51,6 @@ damp = str2double(damp{1});
 %% DEFINITION OF USEFUL FUNCTIONS
 
 % ENERGY EVALUATION
-% Energy_kinetic = @(q, w) 0.5 * m * w' * eye(3) * w - damp * w' * w;
 Energy_kinetic = @(q, w) 0.5 * m * cross(w, q)' * cross(w, q) - m * damp * q' * cross(w, q);
 Energy_potential = @(q, w) potential(q, L, m);
 
@@ -68,7 +66,6 @@ myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 
 %% INITIALIZATION OF THE PROBLEM
 
-% [q0, w0, z0] = initializeZeroVel();
 if exist('z0','var')
     [q0, w0, z0] = initializeSmallVariation(z0, v);
 else
