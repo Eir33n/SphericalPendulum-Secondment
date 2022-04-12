@@ -160,7 +160,7 @@ function animation(q, steps, dstep)
             zlabel("z")
             str = "Time evolution of the pendulums, T="+num2str(dstep*i);
             axis equal;
-            title(str, FontSize=16)
+            title(str, 'FontSize', 16)
             pause(0.0000000000001);
         end
 end
@@ -175,22 +175,22 @@ function post_plots(q, w, K, P, timeVec, method)
     plot(q(2,1), w(2,1), 'ro', 'MarkerSize', 5, 'MarkerFaceColor', 'r')
     plot(q(3,1), w(3,1), 'ro', 'MarkerSize', 5, 'MarkerFaceColor', 'r')
     legend('x-coordinate', 'y-coordinate', 'z-coordiante')
-    xlabel('\textbf{q}', Interpreter='latex', FontSize=16)
-    ylabel('$\dot{\textbf{q}}$', Interpreter='latex', FontSize=16)
-    title("Phase space using "+method, FontSize=18)
+    xlabel('\textbf{q}', 'Interpreter', 'latex', 'FontSize', 16)
+    ylabel('$\dot{\textbf{q}}$', 'Interpreter', 'latex', 'FontSize', 16)
+    title("Phase space using "+method, 'FontSize', 18)
     grid()
     
     figure('Name','Energy of the System')
     ax(1) = subplot(2, 1, 1);
-    plot(timeVec, (K+P), timeVec, P, timeVec, K, LineWidth=3)
-    ylabel('Energy', FontSize=16)
+    plot(timeVec, (K+P), timeVec, P, timeVec, K, 'LineWidth', 3)
+    ylabel('Energy', 'FontSize', 16)
     legend('Total Energy', 'Potential Energy', 'Kinetic Energy')
     grid()
     ax(2) = subplot(2, 1, 2);
-    plot(timeVec, (K+P), LineWidth=3)
-    ylabel('Total Energy', FontSize=16)
+    plot(timeVec, (K+P), 'LineWidth', 3)
+    ylabel('Total Energy', 'FontSize', 16)
     grid()
-    linkaxes(ax,'x');
-    xlabel('Time', FontSize=16)
+    linkaxes(ax, 'x');
+    xlabel('Time', 'FontSize', 16)
     sgtitle("Energy of the system using "+method, 'FontSize', 18)
 end

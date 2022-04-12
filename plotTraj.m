@@ -18,7 +18,9 @@ for i = 1:m
 
     x = linspace(0, 1, n);
     for j = 1:n
-        plot3(q(1, j), q(2, j), q(3, j), 'o', MarkerSize=3, MarkerFaceColor=x(end-(j-1)).*myColor(i*ind, :), MarkerEdgeColor='none')
+        plot3(q(1, j), q(2, j), q(3, j), 'o', 'MarkerSize', 3, ...
+            'MarkerFaceColor', x(end-(j-1)).*myColor(i*ind, :), ...
+            'MarkerEdgeColor', 'none')
     end
 end
 

@@ -18,9 +18,10 @@ if nargin < 1
     h.EdgeColor = 'k';
     h.LineStyle = ':';
     hold on
-    plot3(cartCoord(1, :), cartCoord(2, :), cartCoord(3, :), '-r', LineWidth=3)
-    plot3([0, q1(1)], [0 q1(2)], [0, q1(3)], '-k', LineWidth=3)
-    plot3([0, q2(1)], [0 q2(2)], [0, q2(3)], '-k', LineWidth=3)
+    plot3(cartCoord(1, :), cartCoord(2, :), cartCoord(3, :), '-r', ...
+                                                   'LineWidth', 3)
+    plot3([0, q1(1)], [0 q1(2)], [0, q1(3)], '-k', 'LineWidth', 3)
+    plot3([0, q2(1)], [0 q2(2)], [0, q2(3)], '-k', 'LineWidth', 3)
 else
     plotTraj(sols)
     
@@ -42,7 +43,8 @@ else
             cartCoord(:, j) = sph2cart(geoCurr.y(1:2, j));
             cartCoord(:, j) = Q * cartCoord(:, j);
         end
-        plot3(cartCoord(1, :), cartCoord(2, :), cartCoord(3, :), '-k', LineWidth=3);
+        plot3(cartCoord(1, :), cartCoord(2, :), cartCoord(3, :), '-k', ...
+                                                       'LineWidth', 3)
     end
 end
 
