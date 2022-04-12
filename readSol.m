@@ -22,7 +22,7 @@ end
 % open the file and saving the data
 fileID = fopen(strcat('out/', filename), 'r');
 
-formatSpec = '%.15f';
+formatSpec = '%e';
 sizeSol = [6 Inf];
 sol = fscanf(fileID, formatSpec, sizeSol);
 
