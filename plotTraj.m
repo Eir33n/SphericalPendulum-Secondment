@@ -1,4 +1,4 @@
-function plotTraj(sols)
+function plotTraj(sols, upto)
 % plot the trajectories of spherical pendulum solutions
 
 % Create sphere surface
@@ -15,9 +15,12 @@ for i = 1:m
     q = sols{i}(1:3, :);
 
     [~, n] = size(q);
+    if nargin < 2
+        upto = n;
+    end
 
-    x = linspace(0, 1, n);
-    for j = 1:n
+    x = linspace(0, 1, upto);
+    for j = 1:upto
         plot3(q(1, j), q(2, j), q(3, j), 'o', 'MarkerSize', 3, ...
             'MarkerFaceColor', x(end-(j-1)).*myColor(i*ind, :), ...
             'MarkerEdgeColor', 'none')
