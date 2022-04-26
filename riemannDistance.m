@@ -12,7 +12,7 @@ if m1~=m2 || n1~=n2
     error('incompatible solutions!')
 end
 
-rslt = zeros(n1, 1);
+rslt = zeros(1, n1);
 
 for i = 1:n1
     if calculate_geodesic
