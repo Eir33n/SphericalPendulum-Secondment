@@ -1,10 +1,11 @@
-clearvars -except z0 v
+clearvars
 %% NUMERICAL PARAMETERS
 
 % CHOOSE A METHOD
 method =  listdlg('PromptString',{'Choose a method'}, ...
     'ListString',{'explicit Lie Euler method', 'implicit Lie Euler Method', ...
-    'implicit Lie Midpoint Rule', 'Close the current run'}, 'SelectionMode', 'single');
+    'implicit Lie Midpoint Rule', 'Close the current run'}, 'SelectionMode', 'single', ...
+     'ListSize', [200 160]);
 
 switch method
     case 1
@@ -14,6 +15,7 @@ switch method
     case 3
         my_method = "implicit midpoint rule";
     case 4
+        clearvars
         return
     otherwise
         error('Method Not Implemented yet');
@@ -48,6 +50,15 @@ dims = [1 40];
 damp = inputdlg(prompt,dlgtitle,dims,definput);
 damp = str2double(damp{1});
 
+%% SAVE PARAMETERS TO FILE
+% clear not useful variable
+clear prompt dlgtitle definput dims
+% save the time stamp as a string.
+% format: 'yyyyMMddTHHmmss'
+timestamp = datestr(now,30);
+filename = strcat('out/', timestamp, 'prm', '.mat');
+save(filename)
+
 %% DEFINITION OF USEFUL FUNCTIONS
 
 % ENERGY EVALUATION
@@ -66,12 +77,32 @@ myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 
 %% INITIALIZATION OF THE PROBLEM
 
-if exist('z0','var')
-    [q0, w0, z0] = initializeSmallVariation(z0, v);
-else
-%     [q0, w0, z0, v] = initializeSE3();
-    [q0, w0, z0, v] = initializeZeroVel();
-%     [q0, w0, z0, v] = initializeSame();
+% CHOOSE AN INIZIALIZATION
+init =  listdlg('PromptString',{'Choose an initialization'}, ...
+    'ListString',{'Random (q, w)', 'Random q, w=0', ...
+    'Choose (q, w)', 'Small variation in q', ...
+    'Small variation in (q, w)'}, 'SelectionMode', 'single', ...
+     'ListSize', [200 160]);
+
+switch init
+    case 1
+        [q0, w0, z0] = initializeSE3();
+    case 2
+        [q0, w0, z0] = initializeZeroVel();
+    case 3
+        answer = inputdlg('Enter space-separated (q0, w0):', 'Initial values', [1 50]);
+        z0 = str2num(answer{1});
+        z0 = transpose(z0);
+        q0 = z0(1:3);
+        w0 = z0(4:6);
+    case 4
+        z0 = startingValue();
+        [q0, w0, z0] = initializeSmallVariation(z0);
+    case 5
+        z0 = startingValue();
+        [q0, w0, z0] = initializeSmallVariation(z0, true);
+    otherwise
+        error('Not valide choice');
 end
 
 disp(['The initial configuration of this run is: ', newline, ...
@@ -108,9 +139,6 @@ for i = 1:N_TIME-1
 end
 
 %% SAVE SOLUTION ON TXT FILE
-% save the time stamp as a string.
-% format: 'yyyyMMddTHHmmss'
-timestamp = datestr(now,30);
 saveFile = strcat('out/', timestamp, 'sol', '.txt');
 fileID = fopen(saveFile, 'w');
 fprintf(fileID, '%.16f %.16f %.16f %.16f %.16f %.16f\n', zSol);

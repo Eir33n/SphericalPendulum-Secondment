@@ -1,4 +1,4 @@
-function sols = readAll(many)
+function [sols, params] = readAll(many)
 % reading all solutions file
 % in the directory out/
 
@@ -10,6 +10,7 @@ if nargin == 0
 end
 
 sols = cell(many, 1);
+params = cell(many, 1);
 
 % read all the files in the dir
 for i = 1:many
@@ -21,6 +22,8 @@ for i = 1:many
     sols{i} = fscanf(fileID, formatSpec, sizeSol);
     
     fclose(fileID);
+
+    params{i} = load(strcat('out/', filename(1:end-7), 'prm.mat'));
 end
 
 end

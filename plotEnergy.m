@@ -1,4 +1,9 @@
-function plotEnergy(sols)
+function plotEnergy(sols, damp)
+
+if nargin < 2
+    damp = inputdlg('Insert a value for damping:', 'Damping value', [1 40], {'0'});
+    damp = str2double(damp{1});
+end
 
 prompt = {'Insert mass value'};
 dlgtitle = 'Mass value';

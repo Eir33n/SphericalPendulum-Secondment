@@ -10,6 +10,6 @@ V = assembleF(q, w, m, L);
 
 F = zeros(6, 1);
 F(1:3) = cross(w, q);
-F(4:6) = cross(V, q) - damp * w;
+F(4:6) = cross(V, q) + damp * cross(w, q);
 
 end
