@@ -1,4 +1,7 @@
-function rslt = evalGeo(sol1, sol2)
+function rslt = evalGeo(sols)
+
+sol1 = sols{1};
+sol2 = sols{2};
 
 [m1, n1] = size(sol1);
 [m2, n2] = size(sol2);

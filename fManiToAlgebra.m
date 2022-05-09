@@ -1,4 +1,4 @@
-function F = fManiToAlgebra(q, w, L, m, damp)
+function F = fManiToAlgebra(q, w, damp)
 
 % Assembling RHS of the mathematical pendulum
 % subject to Earth gravitation [g = 9.81 m/s^2]
@@ -6,11 +6,10 @@ function F = fManiToAlgebra(q, w, L, m, damp)
 
 % TODO : better understand of the damping to make it more physical accurate
 
-V = assembleF(q, w, m, L);
+V = assembleF(q, w);
 
 F = zeros(6, 1);
 F(1:3) = cross(w, q);
-% F(4:6) = cross(V, q) + damp * cross(w, q);
-F(4:6) = cross(V, q) - damp * w;
+F(4:6) = cross(V, q) + damp * cross(w, q);
 
 end

@@ -30,7 +30,7 @@ end
 % tolerance (relative and absolute) for Netwon iteration
 t0 = 0;
 T = 10; 
-N_TIME = 10000; 
+N_TIME = 100000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
@@ -70,7 +70,7 @@ getq = @(v) v(1:3);
 getw = @(v) v(4:6);
 
 % RHS OF THE SYSTEM, RESIDUAL AND JACOBIAN FOR IMPLICIT METHODS
-f = @(v) fManiToAlgebra(getq(v), getw(v), L, m, damp); 
+f = @(v) fManiToAlgebra(getq(v), getw(v), damp); 
 action = @(B, input) actionSE3(B, input);
 myRes = @(v0, v, h) residualSE3(v0, v, h, f, action, my_method);
 myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);

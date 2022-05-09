@@ -15,20 +15,14 @@ q1 = cart2sph(q1);
 w1 = vec2sph(q1, w1);
 q2 = cart2sph(q2);
 w2 = vec2sph(q2, w2);
-% q1 = cart2sph(sol1(1:3));
-% w1 = vec2sph(sol1(1:3), sol1(4:6));
-% q2 = cart2sph(sol2(1:3));
-% w2 = vec2sph(sol2(1:3), sol2(4:6));
 
 % saving the points without the radius component (should be always one)
-tol = 1e-13;
+tol = 1e-10;
 if (q1(1) < 1 - tol || q1(1) > 1 + tol) || (q2(1) < 1 - tol || q2(1) > 1 + tol)
     error('solution not on the sphere!')
 end
 P1 = [q1(2); q1(3); w1(2); w1(3)];
 P2 = [q2(2); q2(3); w2(2); w2(3)];
-% P1 = [q1(2); q1(3); 0; 0];
-% P2 = [q2(2); q2(3); 0; 0];
 
 % definition of the function for the resolution of the geodesics
 bvpfun = @(x, y) geodesicEq(x, y);
