@@ -1,6 +1,6 @@
 clearvars
 %% NUMERICAL PARAMETERS
-
+% just a comment
 % CHOOSE A METHOD
 method =  listdlg('PromptString',{'Choose a method'}, ...
     'ListString',{'explicit Lie Euler method', 'implicit Lie Euler Method', ...
