@@ -20,7 +20,7 @@ for i = 1:m
     end
 
     x = linspace(0, 1, upto);
-    for j = 1:upto
+    for j = 1:100:upto
         plot3(q(1, j), q(2, j), q(3, j), 'o', 'MarkerSize', 3, ...
             'MarkerFaceColor', x(end-(j-1)).*myColor(i*ind, :), ...
             'MarkerEdgeColor', 'none')

@@ -29,8 +29,8 @@ end
 % maximal iteration steps for implicit methods
 % tolerance (relative and absolute) for Netwon iteration
 t0 = 0;
-T = 10; 
-N_TIME = 100000; 
+T = 5; 
+N_TIME = 10000; 
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
