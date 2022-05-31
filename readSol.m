@@ -1,22 +1,23 @@
-function sol = readSol(which)
-% Read the solution of the spherical pendulum
+function [sol, param] = readSol(which)
+% Read one solution of the spherical pendulum
 % from a txt file in the folder out/
+% which = 0 is the newest solution
+% which = 1 is the oldest
+% a negative which will take the solution starting from the newest
+% a positive which will take the solution starting from the oldest
 
 if nargin == 0
-   which = 0;
+   which = 0; % saving the newest
 end
 
 % all txt file in the directory
 files = dir('out/*.txt');
 
-% rearrange the file for creation data and saving the index
-[~, sorti] = sort(cat(1, files.datenum));
-
 % save the desired file name
 if which <= 0
-    filename = files(sorti(end+which)).name;
+    filename = files(end+which).name;
 else
-    filename = files(sorti(which)).name;
+    filename = files(which).name;
 end
 
 % open the file and saving the data
@@ -27,5 +28,8 @@ sizeSol = [6 Inf];
 sol = fscanf(fileID, formatSpec, sizeSol);
 
 fclose(fileID);
+
+% loading the parameters
+param = load(strcat('out/', filename(1:end-7), 'prm.mat'));
 
 end

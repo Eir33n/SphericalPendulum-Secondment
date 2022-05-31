@@ -1,10 +1,10 @@
-function plotDist(rDist, eDist, same)
+function plotDist(rDist, eDist, params, same)
 
-if nargin < 3
+if nargin < 4
     same = false;
 end
 
-time = linspace(0, 10, size(rDist, 2));
+time = linspace(params{1}.t0, params{1}.T, params{1}.N_TIME);
 
 if same
     subplot(2,1,1)

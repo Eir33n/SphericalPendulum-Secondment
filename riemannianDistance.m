@@ -1,20 +1,16 @@
-function rslt = distanceProva(sols, params)
+function rslt = riemannianDistance(sols, params)
 % evaluating the distance using the norm of the
 % Sasaki log map
 
-
-% tutta questa roba non funziona!! controlla ancora bene tutto
-% cerca di capire cosa sbagli e cosa invece va bene
-% quali valori devono essere dati a delta??
-% per molti valori non si converge!!!
 sol1 = sols{1};
 sol2 = sols{2};
 
 n = params{1}.N_TIME;
-nSteps = 5;
-maxIt = 10;
-delta = 0.001;
-tol = 1e-3;
+
+% nSteps = 5;
+% maxIt = 1000;
+% delta = 0.001;
+% tol = 1e-6;
 
 rslt = zeros(n, 1);
 

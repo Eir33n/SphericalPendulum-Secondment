@@ -1,42 +1,25 @@
-function plotEnergy(sols, damp)
-
-if nargin < 2
-    damp = inputdlg('Insert a value for damping:', 'Damping value', [1 40], {'0'});
-    damp = str2double(damp{1});
-end
-
-prompt = {'Insert mass value'};
-dlgtitle = 'Mass value';
-definput = {'1'};
-dims = [1 40];
-M = inputdlg(prompt,dlgtitle,dims,definput);
-M = str2double(M{1});
-
-prompt = {'Insert length value'};
-dlgtitle = 'Length value';
-definput = {'1'};
-dims = [1 40];
-L = inputdlg(prompt,dlgtitle,dims,definput);
-L = str2double(L{1});
+function plotEnergy(sols, params)
 
 % ENERGY EVALUATION
-Energy_kinetic = @(q, w) 0.5 * M * cross(w, q)' * cross(w, q) - M * damp * q' * cross(w, q);
-Energy_potential = @(q, w) potential(q, L, M);
+Energy_kinetic = @(q, w, damp, M) 0.5 * M * cross(w, q)' * cross(w, q) - M * damp * q' * cross(w, q);
+Energy_potential = @(q, w, L, M) potential(q, L, M);
 
 [m, ~] = size(sols);
 
 for i = 1:m
     qSol = sols{i}(1:3, :);
     wSol = sols{i}(4:6, :);
+    damp = params{i}.damp;
+    M = params{i}.m;
+    L = params{i}.L;
 
-    [~, n] = size(qSol);
-    timeVec = linspace(0, 1, n);
+    timeVec = linspace(params{i}.t0, params{i}.T, params{i}.N_TIME);
     K = zeros(n, 1);
     P = zeros(n, 1);
 
     for j = 1:n
-        K(j) = Energy_kinetic(qSol(:, j), wSol(:, j));
-        P(j) = Energy_potential(qSol(:, j), wSol(:, j));
+        K(j) = Energy_kinetic(qSol(:, j), wSol(:, j), damp, M);
+        P(j) = Energy_potential(qSol(:, j), wSol(:, j), L, M);
     end
 
     figure()
@@ -52,6 +35,14 @@ for i = 1:m
     linkaxes(ax,'x');
     xlabel('Time', 'FontSize', 16)
     sgtitle("Energy of the system "+num2str(i), 'FontSize', 18)
+
+    figure()
+    plot(timeVec(2:end), diff(K+P)./diff(timeVec), 'r-', 'LineWidth', 3)
+    xlabel('Time', 'FontSize', 16)
+    ylabel('Energy', 'FontSize', 16)
+    legend('D(Total Energy)/D(time)')
+    grid()
+    title("Time Derivative of the Energy of the system "+num2str(i), 'FontSize', 18)
 
 end
 
