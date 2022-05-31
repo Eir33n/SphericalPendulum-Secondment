@@ -29,8 +29,13 @@ end
 % maximal iteration steps for implicit methods
 % tolerance (relative and absolute) for Netwon iteration
 t0 = 0;
-T = 5; 
-N_TIME = 1000; 
+T = 5;
+prompt = {'Insert a (integer) number of time steps'};
+dlgtitle = 'Number of time steps';
+definput = {'1000'};
+dims = [1 40];
+N_TIME = inputdlg(prompt,dlgtitle,dims,definput);
+N_TIME = str2double(N_TIME{1});
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
@@ -90,9 +95,7 @@ switch init
     case 2
         [q0, w0, z0] = initializeZeroVel();
     case 3
-        answer = inputdlg('Enter space-separated (q0, w0):', 'Initial values', [1 50]);
-        z0 = str2num(answer{1});
-        z0 = transpose(z0);
+        z0 = startingValue();
         q0 = z0(1:3);
         w0 = z0(4:6);
     case 4
