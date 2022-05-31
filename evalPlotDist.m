@@ -10,6 +10,6 @@ end
 
 rDist = riemannianDistance(sols, params);
 eDist = euclidDistance(sol1, sol2);
-plotDist(rDist, eDist, same)
+plotDist(rDist, eDist, params, same)
 
 end
