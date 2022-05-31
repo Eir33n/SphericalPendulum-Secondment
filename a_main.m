@@ -67,7 +67,7 @@ save(filename)
 %% DEFINITION OF USEFUL FUNCTIONS
 
 % ENERGY EVALUATION
-Energy_kinetic = @(q, w) 0.5 * m * cross(w, q)' * cross(w, q) - m * damp * q' * cross(w, q);
+Energy_kinetic = @(q, w) 0.5 * m * cross(w, q)' * cross(w, q);
 Energy_potential = @(q, w) potential(q, L, m);
 
 % RETRIEVE POSITION AND ANGULAR VELOCITY FROM THE SOLUTION VECTOR

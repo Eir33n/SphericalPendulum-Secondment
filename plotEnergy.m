@@ -1,7 +1,7 @@
 function plotEnergy(sols, params)
 
 % ENERGY EVALUATION
-Energy_kinetic = @(q, w, damp, M) 0.5 * M * cross(w, q)' * cross(w, q) - M * damp * q' * cross(w, q);
+Energy_kinetic = @(q, w, damp, M) 0.5 * M * cross(w, q)' * cross(w, q);
 Energy_potential = @(q, w, L, M) potential(q, L, M);
 
 [m, ~] = size(sols);
@@ -13,6 +13,7 @@ for i = 1:m
     M = params{i}.m;
     L = params{i}.L;
 
+    n = params{i}.N_TIME;
     timeVec = linspace(params{i}.t0, params{i}.T, params{i}.N_TIME);
     K = zeros(n, 1);
     P = zeros(n, 1);

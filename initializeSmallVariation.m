@@ -10,10 +10,10 @@ if nargin > 1
         v = cross(z0(4:6), z0(1:3)) + 0.01 * rand(3, 1);
         w0 = cross(q0, v);
     else
-        w0 = z0(4:6);
+        w0 = (eye(3) - q0*q0') * z0(4:6);
     end
 else
-    w0 = z0(4:6);
+    w0 = (eye(3) - q0*q0') * z0(4:6);
 end
 
 z0 = [q0; w0];
