@@ -74,7 +74,7 @@ end
 
 %==============================================================================%
 
-function [ value, isterminal, direction ] = myEventsFcn ( t, y )
+function [ value, isterminal, direction ] = myEventsFcn ( ~, y )
 
 normq  = norm ( y(   1:3 ) );
 normom = norm ( y(3+(1:3)) );

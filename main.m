@@ -1,10 +1,12 @@
+%% MAIN FUNCTION FOR THE SOLUTION OF SPHERICAL PENDULUM
+function main
 clearvars
 %% NUMERICAL PARAMETERS
 % just a comment
 % CHOOSE A METHOD
 method =  listdlg('PromptString',{'Choose a method'}, ...
     'ListString',{'explicit Lie Euler method', 'implicit Lie Euler Method', ...
-    'implicit Lie Midpoint Rule', 'Close the current run'}, 'SelectionMode', 'single', ...
+    'implicit Lie Midpoint Rule', 'MATLAB ode45', 'Close the current run'}, 'SelectionMode', 'single', ...
      'ListSize', [200 160]);
 
 switch method
@@ -15,6 +17,8 @@ switch method
     case 3
         my_method = "implicit midpoint rule";
     case 4
+        my_method = "ode45";
+    case 5
         clearvars
         return
     otherwise
@@ -29,7 +33,7 @@ end
 % maximal iteration steps for implicit methods
 % tolerance (relative and absolute) for Netwon iteration
 t0 = 0;
-T = 5;
+T = 10;
 prompt = {'Insert a (integer) number of time steps'};
 dlgtitle = 'Number of time steps';
 definput = {'1000'};
@@ -48,6 +52,7 @@ rtol = 1e-10;
 % LENGTH, MASS AND DAMPING OF THE PENDULUM
 L = 1; 
 m = 1;
+k = 10;
 prompt = {'Insert a (non-negative) damping value'};
 dlgtitle = 'Damping value';
 definput = {'0'};
@@ -70,12 +75,8 @@ save(filename)
 Energy_kinetic = @(q, w) 0.5 * m * cross(w, q)' * cross(w, q);
 Energy_potential = @(q, w) potential(q, L, m);
 
-% RETRIEVE POSITION AND ANGULAR VELOCITY FROM THE SOLUTION VECTOR
-getq = @(v) v(1:3);
-getw = @(v) v(4:6);
-
 % RHS OF THE SYSTEM, RESIDUAL AND JACOBIAN FOR IMPLICIT METHODS
-f = @(v) fManiToAlgebra(getq(v), getw(v), damp); 
+f = @(v) fManiToAlgebra(v, damp, k); 
 action = @(B, input) actionSE3(B, input);
 myRes = @(v0, v, h) residualSE3(v0, v, h, f, action, my_method);
 myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
@@ -107,6 +108,7 @@ switch init
     otherwise
         error('Not valide choice');
 end
+clear init
 
 disp(['The initial configuration of this run is: ', newline, ...
     '[', num2str(q0(1)), ' ', num2str(q0(2)), ' ', num2str(q0(3)), ']', ' position', newline, ...
@@ -131,14 +133,30 @@ disp("Energy of this initial condition: " + ...
 for i = 1:N_TIME-1
     if method == 1
         zSol(:, i+1) = LieEulerSE3(f, action, zSol(:, i), dt);
-    else
+    elseif method < 4
         zSol(:, i+1) = NewtonItSE3(myRes, myJac, zSol(:, i), dt, max_it, atol, rtol);
+    else
+        break
     end
 
-    qSol(:, i+1) = getq(zSol(:, i+1));
-    wSol(:, i+1) = getw(zSol(:, i+1));
+    qSol(:, i+1) = zSol(1:3, i+1);
+    wSol(:, i+1) = zSol(3+(1:3), i+1);
     kinetic_energy(i+1) = Energy_kinetic(qSol(:, i+1), wSol(:, i+1));
     potential_energy(i+1) = Energy_potential(qSol(:, i+1), wSol(:, i+1));
+end
+
+if method == 4
+    options = odeset('AbsTol', atol, 'RelTol', rtol);
+    zSol = ode45(@(t,y) fManiToAlgebra(y, damp, k), [t0, T], zSol(:, 1), options);
+    clear options
+    N_TIME = size(zSol.x, 2);
+    dt = (T - t0) / N_TIME;
+    time = linspace(t0, T, N_TIME);
+    zSol = zSol.y;
+    qSol = zSol(1:3, :);
+    wSol = zSol(3+(1:3), :);
+    delete(filename)
+    save(filename)
 end
 
 %% SAVE SOLUTION ON TXT FILE
@@ -173,6 +191,8 @@ else
     disp('It was a pleasure serving you!')
     clearvars
 end
+end
+
 
 %% USEFUL POST PROCESSING FUNCTIONS
 
@@ -183,7 +203,7 @@ function animation(q, steps, dstep)
         h = surf(xS2, yS2, zS2, 'FaceAlpha', 0.1); 
         h.EdgeColor = 'none';
         hold on
-        for i = 1:steps/200:steps
+        for i = 1:steps
             % Plot pendulum at time step i
             plot3([0, q(1,i)], [0, q(2,i)], [0, q(3,i)], 'r*');
             xlabel("x")
