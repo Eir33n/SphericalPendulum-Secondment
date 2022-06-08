@@ -1,14 +1,15 @@
 %% MAIN FUNCTION FOR THE SOLUTION OF SPHERICAL PENDULUM
-function main
-clearvars
+function main(method, N_TIME, k, damp, z0, T)
+clearvars -except method N_TIME k damp z0 T
 %% NUMERICAL PARAMETERS
 % just a comment
 % CHOOSE A METHOD
-method =  listdlg('PromptString',{'Choose a method'}, ...
-    'ListString',{'explicit Lie Euler method', 'implicit Lie Euler Method', ...
-    'implicit Lie Midpoint Rule', 'MATLAB ode45', 'Close the current run'}, 'SelectionMode', 'single', ...
-     'ListSize', [200 160]);
-
+if nargin < 1
+    method =  listdlg('PromptString',{'Choose a method'}, ...
+        'ListString',{'explicit Lie Euler method', 'implicit Lie Euler Method', ...
+        'implicit Lie Midpoint Rule', 'MATLAB ode45', 'Close the current run'}, 'SelectionMode', 'single', ...
+         'ListSize', [200 160]);
+end
 switch method
     case 1
         my_method = "explicit Lie Euler method";
@@ -33,13 +34,17 @@ end
 % maximal iteration steps for implicit methods
 % tolerance (relative and absolute) for Netwon iteration
 t0 = 0;
-T = 10;
-prompt = {'Insert a (integer) number of time steps'};
-dlgtitle = 'Number of time steps';
-definput = {'1000'};
-dims = [1 40];
-N_TIME = inputdlg(prompt,dlgtitle,dims,definput);
-N_TIME = str2double(N_TIME{1});
+if nargin < 6
+    T = 10;
+end
+if nargin < 2
+    prompt = {'Insert a (integer) number of time steps'};
+    dlgtitle = 'Number of time steps';
+    definput = {'1000'};
+    dims = [1 40];
+    N_TIME = inputdlg(prompt,dlgtitle,dims,definput);
+    N_TIME = str2double(N_TIME{1});
+end
 time = linspace(t0, T, N_TIME); 
 dt = time(2) - time(1); disp(num2str(dt) + " time step size")
 
@@ -52,13 +57,15 @@ rtol = 1e-10;
 % LENGTH, MASS AND DAMPING OF THE PENDULUM
 L = 1; 
 m = 1;
-k = 10;
-prompt = {'Insert a (non-negative) damping value'};
-dlgtitle = 'Damping value';
-definput = {'0'};
-dims = [1 40];
-damp = inputdlg(prompt,dlgtitle,dims,definput);
-damp = str2double(damp{1});
+if nargin < 3
+    k = 10;
+    prompt = {'Insert a (non-negative) damping value'};
+    dlgtitle = 'Damping value';
+    definput = {'0'};
+    dims = [1 40];
+    damp = inputdlg(prompt,dlgtitle,dims,definput);
+    damp = str2double(damp{1});
+end
 
 %% SAVE PARAMETERS TO FILE
 % clear not useful variable
@@ -82,33 +89,36 @@ myRes = @(v0, v, h) residualSE3(v0, v, h, f, action, my_method);
 myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 
 %% INITIALIZATION OF THE PROBLEM
-
-% CHOOSE AN INIZIALIZATION
-init =  listdlg('PromptString',{'Choose an initialization'}, ...
-    'ListString',{'Random (q, w)', 'Random q, w=0', ...
-    'Choose (q, w)', 'Small variation in q', ...
-    'Small variation in (q, w)'}, 'SelectionMode', 'single', ...
-     'ListSize', [200 160]);
-
-switch init
-    case 1
-        [q0, w0, z0] = initializeSE3();
-    case 2
-        [q0, w0, z0] = initializeZeroVel();
-    case 3
-        z0 = startingValue();
-        q0 = z0(1:3);
-        w0 = z0(4:6);
-    case 4
-        z0 = startingValue();
-        [q0, w0, z0] = initializeSmallVariation(z0);
-    case 5
-        z0 = startingValue();
-        [q0, w0, z0] = initializeSmallVariation(z0, true);
-    otherwise
-        error('Not valide choice');
+if nargin < 5
+    % CHOOSE AN INIZIALIZATION
+    init =  listdlg('PromptString',{'Choose an initialization'}, ...
+        'ListString',{'Random (q, w)', 'Random q, w=0', ...
+        'Choose (q, w)', 'Small variation in q', ...
+        'Small variation in (q, w)'}, 'SelectionMode', 'single', ...
+         'ListSize', [200 160]);
+    switch init
+        case 1
+            [q0, w0, z0] = initializeSE3();
+        case 2
+            [q0, w0, z0] = initializeZeroVel();
+        case 3
+            z0 = startingValue();
+            q0 = z0(1:3);
+            w0 = z0(4:6);
+        case 4
+            z0 = startingValue();
+            [q0, w0, z0] = initializeSmallVariation(z0);
+        case 5
+            z0 = startingValue();
+            [q0, w0, z0] = initializeSmallVariation(z0, true);
+        otherwise
+            error('Not valide choice');
+    end
+    clear init
+else
+    q0 = z0(1:3);
+    w0 = z0(3+(1:3));
 end
-clear init
 
 disp(['The initial configuration of this run is: ', newline, ...
     '[', num2str(q0(1)), ' ', num2str(q0(2)), ' ', num2str(q0(3)), ']', ' position', newline, ...
@@ -165,34 +175,35 @@ fileID = fopen(saveFile, 'w');
 fprintf(fileID, '%.16f %.16f %.16f %.16f %.16f %.16f\n', zSol);
 fclose(fileID);
 
-%% TIME EVOLUTION OF THE SOLUTION
-plotsPlus = questdlg('Post processing analysis?', ...
-    'Plots and Animations', 'Yes, all', ...
-    'Yes, just plots', 'No, thank you!','Yes, all');
-
-switch plotsPlus
-    case 'Yes, all'
-        animation(qSol, N_TIME, dt);
-        post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
-%     case 'Yes, just animation'
-%         animation(qSol, N_TIME, dt);
-    case 'Yes, just plots'
-        post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
-    case 'No, thank you!'
-        disp('Thank you for using me! Have a nice day!')
+if nargin < 1
+    %% TIME EVOLUTION OF THE SOLUTION
+    plotsPlus = questdlg('Post processing analysis?', ...
+        'Plots and Animations', 'Yes, all', ...
+        'Yes, just plots', 'No, thank you!','Yes, all');
+    
+    switch plotsPlus
+        case 'Yes, all'
+            animation(qSol, N_TIME, dt);
+            post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
+    %     case 'Yes, just animation'
+    %         animation(qSol, N_TIME, dt);
+        case 'Yes, just plots'
+            post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
+        case 'No, thank you!'
+            disp('Thank you for using me! Have a nice day!')
+    end
+    
+    %% MORE SIMULATIONS?
+    run = questdlg('Do you want to perform a new simulation?', ...
+        'New Simulation', 'Yes', 'No, thank you!','Yes');
+    if strcmp(run, 'Yes')
+        a_main
+    else
+        disp('It was a pleasure serving you!')
+        clearvars
+    end
 end
-
-%% MORE SIMULATIONS?
-run = questdlg('Do you want to perform a new simulation?', ...
-    'New Simulation', 'Yes', 'No, thank you!','Yes');
-if strcmp(run, 'Yes')
-    a_main
-else
-    disp('It was a pleasure serving you!')
-    clearvars
 end
-end
-
 
 %% USEFUL POST PROCESSING FUNCTIONS
 
