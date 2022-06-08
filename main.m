@@ -157,7 +157,7 @@ end
 
 if method == 4
     options = odeset('AbsTol', atol, 'RelTol', rtol);
-    zSol = ode45(@(t,y) fManiToAlgebra(y, damp, k), [t0, T], zSol(:, 1), options);
+    zSol = ode45(@(t,y) S2rhs(y, damp, k), [t0, T], zSol(:, 1), options);
     clear options
     N_TIME = size(zSol.x, 2);
     dt = (T - t0) / N_TIME;
