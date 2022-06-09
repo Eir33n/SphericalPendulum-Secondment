@@ -156,17 +156,14 @@ for i = 1:N_TIME-1
 end
 
 if method == 4
-    options = odeset('AbsTol', atol, 'RelTol', rtol);
+    tic
+    options = odeset('AbsTol', atol, 'RelTol', rtol, 'Events', @myEventsFcn);
     zSol = ode45(@(t,y) S2rhs(y, damp, k), [t0, T], zSol(:, 1), options);
     clear options
-    N_TIME = size(zSol.x, 2);
-    dt = (T - t0) / N_TIME;
-    time = linspace(t0, T, N_TIME);
-    zSol = zSol.y;
-    qSol = zSol(1:3, :);
-    wSol = zSol(3+(1:3), :);
-    delete(filename)
-    save(filename)
+    qSol = deval(zSol, time, 1:3);
+    wSol = deval(zSol, time, 3+(1:3));
+    zSol = [qSol; wSol];
+    toc
 end
 
 %% SAVE SOLUTION ON TXT FILE
@@ -185,8 +182,6 @@ if nargin < 1
         case 'Yes, all'
             animation(qSol, N_TIME, dt);
             post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
-    %     case 'Yes, just animation'
-    %         animation(qSol, N_TIME, dt);
         case 'Yes, just plots'
             post_plots(qSol, wSol, kinetic_energy, potential_energy, time, my_method);
         case 'No, thank you!'
@@ -255,4 +250,19 @@ function post_plots(q, w, K, P, timeVec, method)
     linkaxes(ax, 'x');
     xlabel('Time', 'FontSize', 16)
     sgtitle("Energy of the system using "+method, 'FontSize', 18)
+end
+
+function [ value, isterminal, direction ] = myEventsFcn ( ~, y )
+
+normq  = norm ( y(   1:3 ) );
+normom = norm ( y(3+(1:3)) );
+
+value = zeros ( 3, 1 );
+value(1) = normq -  0.1;
+value(2) = normq - 10.0;
+value(3) = normom - 1.0e+6;
+
+isterminal = ones ( size ( value ) );
+direction = zeros ( size ( value ) );
+
 end
