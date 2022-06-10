@@ -159,10 +159,19 @@ if method == 4
     tic
     options = odeset('AbsTol', atol, 'RelTol', rtol, 'Events', @myEventsFcn);
     zSol = ode45(@(t,y) S2rhs(y, damp, k), [t0, T], zSol(:, 1), options);
+%     clear options
     clear options
-    qSol = deval(zSol, time, 1:3);
-    wSol = deval(zSol, time, 3+(1:3));
-    zSol = [qSol; wSol];
+    N_TIME = size(zSol.x, 2);
+    dt = (T - t0) / N_TIME;
+    time = linspace(t0, T, N_TIME);
+    zSol = zSol.y;
+    qSol = zSol(1:3, :);
+    wSol = zSol(3+(1:3), :);
+    delete(filename)
+    save(filename)
+%     qSol = deval(zSol, time, 1:3);
+%     wSol = deval(zSol, time, 3+(1:3));
+%     zSol = [qSol; wSol];
     toc
 end
 
@@ -192,7 +201,7 @@ if nargin < 1
     run = questdlg('Do you want to perform a new simulation?', ...
         'New Simulation', 'Yes', 'No, thank you!','Yes');
     if strcmp(run, 'Yes')
-        a_main
+        main
     else
         disp('It was a pleasure serving you!')
         clearvars

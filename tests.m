@@ -1,6 +1,6 @@
 %% number of tests
 
-N = 4;
+N = 10;
 
 %% METHOD
 % method = 1 --> explicit Lie Euler
@@ -10,27 +10,29 @@ N = 4;
 % method = 5 --> closes run
 % method > 5 --> gives error
 
-method = 1:4;
+method = 3 * ones(1, N);
 
 %% TIME and STEPS
 % T = end time of the simulation
 % N_TIME = number of steps
-T = 10;
-N_TIME = 1e5 * ones(1, 4);
+T = 1;
+N_TIME = logspace(0.01, 3, N);
+N_TIME = ceil(N_TIME);
 
 %% system parameters
 
-k = 10;
-damp = 0;
+k = 0;
+damp = [1, 5, 10, 50, 100, 500];
 
 %% initial conditions
 
-[q0, w0, z0] = initializeSE3();
+z0 = [1; 0; 0; 0; 0; 0];
 
-
+for j = 1:6
 for i = 1:N
-    main(method(i), N_TIME(i), k, damp, z0, T)
+    main(method(i), N_TIME(i), k, damp(j), z0, T)
     pause(1)
+end
 end
 
 clearvars
