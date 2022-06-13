@@ -1,4 +1,4 @@
-function sol = NewtonItSE3(residual, jacobian, p, h, max_it, tol)
+function sol = NewtonItSE3(residual, jacobian, p, h, max_it, atol, rtol)
 
 % Newton iteration for implicit methods
 % residual is a function to evaluate the RHS of the system
@@ -9,12 +9,12 @@ function sol = NewtonItSE3(residual, jacobian, p, h, max_it, tol)
 % tol is the tolerance to determine when to stop the integration step
 
 pNew = p;
-
+dx = zeros(size(p));
 for i = 1:max_it
     sol = residual(p, pNew, h);
 
     res = -pNew + sol;
-    if norm(res) < tol
+    if norm(res) < rtol*norm(dx) + atol
 %             disp(i)
         break
     end

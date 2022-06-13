@@ -1,0 +1,38 @@
+function error = evalErr(sols, params)
+
+%% Error functions
+norm2 = @(x) sqrt(sum(x.^2, 1)/size(x, 1));
+abserr = @(x, xref) max(norm2(x(:, end) - xref(:, end)));
+relerr = @(x, xref) max(norm2(x(:, end) - xref(:, end)) ./ norm2(xref(:, end)));
+
+%% Looking for the solution with the highest number of time steps
+[m, ~] = size(params);
+oldSteps = params{1}.N_TIME;
+ind = 1;
+for i = 2:m
+    newSteps = params{i}.N_TIME;
+    if newSteps > oldSteps
+        ind = i;
+    end
+end
+% saving the reference solution
+ref = sols{ind};
+
+%% evaluate the error
+error = struct('q_abserr', [], 'q_relerr', [], 'w_abserr', [], 'w_relerr', [], 'steps', []);
+count = 1;
+for k = 1:m
+    if k ==  ind
+        continue
+    end
+    crrSol = sols{k};
+    error.steps(count) = (params{k}.T - params{k}.t0)/params{k}.N_TIME;
+    % absolute error (q and w)
+    error.q_abserr(count) = abserr(crrSol(1:3, :), ref(1:3, :));
+    error.w_abserr(count) = abserr(crrSol(4:6, :), ref(4:6, :));
+    % relative error (q and w)
+    error.q_relerr(count) = relerr(crrSol(1:3, :), ref(1:3, :));
+    error.w_relerr(count) = relerr(crrSol(4:6, :), ref(4:6, :));
+    count = count + 1;
+end
+end
