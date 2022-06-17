@@ -35,7 +35,12 @@ end
 % tolerance (relative and absolute) for Netwon iteration
 t0 = 0;
 if nargin < 6
-    T = 10;
+    prompt = {'Insert the final time'};
+    dlgtitle = 'T end';
+    definput = {'1'};
+    dims = [1 40];
+    T = inputdlg(prompt,dlgtitle,dims,definput);
+    T = str2double(T{1});
 end
 if nargin < 2
     prompt = {'Insert a (integer) number of time steps'};
@@ -58,7 +63,12 @@ rtol = 1e-10;
 L = 1; 
 m = 1;
 if nargin < 3
-    k = 10;
+    prompt = {'Insert a (non-negative) k value'};
+    dlgtitle = 'k value';
+    definput = {'0'};
+    dims = [1 40];
+    k = inputdlg(prompt,dlgtitle,dims,definput);
+    k = str2double(k{1});
     prompt = {'Insert a (non-negative) damping value'};
     dlgtitle = 'Damping value';
     definput = {'0'};

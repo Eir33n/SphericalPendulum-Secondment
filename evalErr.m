@@ -5,13 +5,13 @@ norm2 = @(x) sqrt(sum(x.^2, 1)/size(x, 1));
 abserr = @(x, xref) max(norm2(x(:, end) - xref(:, end)));
 relerr = @(x, xref) max(norm2(x(:, end) - xref(:, end)) ./ norm2(xref(:, end)));
 
-%% Looking for the solution with the highest number of time steps
+%% Looking for the solution with the smallest time step size
 [m, ~] = size(params);
-oldSteps = params{1}.N_TIME;
+oldStep = params{1}.dt;
 ind = 1;
 for i = 2:m
-    newSteps = params{i}.N_TIME;
-    if newSteps > oldSteps
+    newStep = params{i}.dt;
+    if newStep < oldStep
         ind = i;
     end
 end
