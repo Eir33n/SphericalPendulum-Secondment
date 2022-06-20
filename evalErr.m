@@ -19,7 +19,10 @@ end
 ref = sols{ind};
 
 %% evaluate the error
-error = struct('q_abserr', [], 'q_relerr', [], 'w_abserr', [], 'w_relerr', [], 'steps', []);
+error = struct('q_abserr', [], 'q_relerr', [], 'w_abserr', [], ...
+               'w_relerr', [], 'steps', [], 'info', []);
+error.info(1) = m;
+error.info(2) = ind;
 count = 1;
 for k = 1:m
     if k ==  ind
