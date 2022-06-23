@@ -1,5 +1,6 @@
 function rslt = riemannDistance(sol1, sol2, geo)
 % measuring the length of the geodesic
+% OLD FUNCTION NOT TO BE USED!!!
 
 calculate_geodesic = false;
 if nargin < 3

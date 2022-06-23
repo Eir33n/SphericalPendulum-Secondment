@@ -186,10 +186,15 @@ if method == 4
 end
 
 %% SAVE SOLUTION ON TXT FILE
-saveFile = strcat('out/', timestamp, 'sol', '.txt');
-fileID = fopen(saveFile, 'w');
-fprintf(fileID, '%.16f %.16f %.16f %.16f %.16f %.16f\n', zSol);
-fclose(fileID);
+% save the time stamp as a string.
+% format: 'yyyyMMddTHHmmss'
+filename = strcat('out/', timestamp, 'sol', '.mat');
+save(filename, 'zSol')
+
+% saveFile = strcat('out/', timestamp, 'sol', '.txt');
+% fileID = fopen(saveFile, 'w');
+% fprintf(fileID, '%.16f %.16f %.16f %.16f %.16f %.16f\n', zSol);
+% fclose(fileID);
 
 if nargin < 1
     %% TIME EVOLUTION OF THE SOLUTION

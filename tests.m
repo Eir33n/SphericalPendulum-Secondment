@@ -20,11 +20,12 @@ T = 1;
 % T = 1;
 N_TIME = logspace(0.01, 3, N);
 N_TIME = ceil(N_TIME);
+% N_TIME(end+1) = 1e6;
 
 %% system parameters
 
 k = 0;
-damp = linspace(10, 1000, N);
+damp = linspace(10, 1000, N-5);
 
 %% initial conditions
 
@@ -32,7 +33,7 @@ damp = linspace(10, 1000, N);
 % [~, ~, z0(:, 2)] = initializeSmallVariation(z0(:, 1));
 z0 = startingValue();
 
-for j = 1:N
+for j = 1:N-5
 for i = 1:N
     main(method(i), N_TIME(i), k, damp(j), z0, T)
     pause(1)
