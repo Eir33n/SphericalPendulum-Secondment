@@ -30,7 +30,7 @@ for i = 0:upto-1
         
         fclose(fileID);
     else
-        sols{i+1} = load(strcat('out/', filename, 'sol.mat'));
+        sols{i+1} = load(strcat('out/', filename));
         sols{i+1} = sols{i+1}.zSol;
     end
     

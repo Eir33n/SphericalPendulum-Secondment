@@ -5,7 +5,10 @@ function rslt = riemannianDistance(sols, params)
 sol1 = sols{1};
 sol2 = sols{2};
 
-n = params{1}.N_TIME;
+n1 = params{1}.N_TIME;
+n2 = params{2}.N_TIME;
+
+n = min([n1, n2]);
 
 % nSteps = 5;
 % maxIt = 1000;

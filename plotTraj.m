@@ -1,6 +1,6 @@
 function plotTraj(sols, upto)
 % plot the trajectories of spherical pendulum solutions
-
+figure()
 % Create sphere surface
 [xS2, yS2, zS2] = sphere(360);
 h = surf(xS2, yS2, zS2, 'FaceAlpha', 0.1); 

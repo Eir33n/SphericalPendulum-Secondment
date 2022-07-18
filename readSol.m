@@ -37,7 +37,7 @@ if old == 1
     
     fclose(fileID);
 else
-    sol = load(strcat('out/', filename, 'sol.mat'));
+    sol = load(strcat('out/', filename));
     sol = sol.zSol;
 end
 

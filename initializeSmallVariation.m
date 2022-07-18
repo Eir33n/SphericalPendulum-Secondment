@@ -6,8 +6,13 @@ if nargin < 3
 end
 
 % Initial position close to previous position
-q0 = z0(1:3) + rate * rand(3, 1);
-q0 = q0/norm(q0, 2); % Normalize to remain on the unit sphere
+% q0 = z0(1:3) + rate * rand(3, 1);
+% q0 = q0/norm(q0, 2); % Normalize to remain on the unit sphere
+
+q0 = zeros(3, 1);
+q0(2) = z0(2) + rate * rand(1, 1);
+q0(1) = sqrt(1-z0(3)^2-q0(2)^2);
+q0(3) = z0(3);
 if nargin > 1
     if both
         % Angular velocity close to the previous one
