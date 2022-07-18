@@ -1,6 +1,6 @@
 %% number of tests
 
-N = 8;
+N = 6;
 
 %% METHOD
 % method = 1 --> explicit Lie Euler
@@ -10,7 +10,7 @@ N = 8;
 % method = 5 --> closes run
 % method > 5 --> gives error
 
-method = [1 1 2 2 3 3 4 4];
+method = [1 1 2 2 1 1];
 
 %% TIME and STEPS
 % T = end time of the simulation
@@ -24,9 +24,9 @@ N_TIME = 1e5 * ones(1, N);
 
 %% system parameters
 
-k = 10;
+k = 0;
 % damp = linspace(10, 1000, N-5);
-damp = 0.5;
+damp = [10 10 10 10 1 1];
 
 %% initial conditions
 
@@ -42,7 +42,7 @@ for i = 1:4
 end
 
 for i = 1:N
-    main(method(i), N_TIME(i), k, damp, z0(:, i), T)
+    main(method(i), N_TIME(i), k, damp(i), z0(:, i), T)
     pause(1)
 end
 
