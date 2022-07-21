@@ -26,7 +26,7 @@ Q = reshape(Q, 9, 1);
 
 y0 = [m0; Q];
 
-alpha = 0.1;
+alpha = 0;
 
 %% numerical parameters
 
@@ -79,3 +79,35 @@ grid on
 title('Kinetic Energy', 'FontSize', 20)
 xlabel('time', FontSize=16)
 ylabel('Kinetic energy', FontSize=16)
+
+
+%% animation
+
+animation(QSol, time)
+
+function animation(sols, time)
+e1 = [1; 0; 0];
+
+figure('Units','centimeters','Position',[10 10 20 15])
+% Create sphere surface
+[xS2, yS2, zS2] = sphere(360);
+h = surf(xS2, yS2, zS2, 'FaceAlpha', 0.1); 
+h.EdgeColor = 'none';
+hold on
+crr_rot = reshape(sols(:, 1), 3, 3) * e1;
+plot3(crr_rot(1), crr_rot(2), crr_rot(3), 'o');
+for i = 2:size(time, 2)
+    old_rot = crr_rot;
+    % Plot pendulum at time step i
+    crr_rot = reshape(sols(:, i), 3, 3) * e1;
+    plot3([old_rot(1) crr_rot(1)], [old_rot(2) crr_rot(2)], [old_rot(3) crr_rot(3)], '-');
+    xlabel("x")
+    ylabel("y")
+    zlabel("z")
+    str = "Time evolution of the rotation";
+    axis equal;
+    title(str, 'FontSize', 16)
+    grid on
+    pause(0.000000001);
+end
+end
