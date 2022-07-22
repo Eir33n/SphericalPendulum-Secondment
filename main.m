@@ -95,6 +95,7 @@ Energy_potential = @(q, w) potential(q, L, m);
 % RHS OF THE SYSTEM, RESIDUAL AND JACOBIAN FOR IMPLICIT METHODS
 f = @(v) fManiToAlgebra(v, damp, k); 
 action = @(B, input) actionSE3(B, input);
+exponentialMap = @(v) expSE3(v);
 myRes = @(v0, v, h) residualSE3(v0, v, h, f, action, my_method);
 myJac = @(v0, v, h) jacobianSE3(v0, v, h, f, action, my_method);
 
@@ -152,7 +153,7 @@ disp("Energy of this initial condition: " + ...
 %% SOLUTION OF THE SYSTEM
 for i = 1:N_TIME-1
     if method == 1
-        zSol(:, i+1) = LieEulerSE3(f, action, zSol(:, i), dt);
+        zSol(:, i+1) = LieEuler(f, action, exponentialMap, zSol(:, i), dt);
     elseif method < 4
         zSol(:, i+1) = NewtonItSE3(myRes, myJac, zSol(:, i), dt, max_it, atol, rtol);
     else
